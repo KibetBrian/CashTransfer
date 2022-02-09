@@ -1,11 +1,11 @@
-package utils
+package configs
 
 import (
 	"fmt"
 	"log"
 	"os"
 	"strconv"
-
+	"github.com/KibetBrian/fisa/models"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
@@ -17,6 +17,7 @@ var (
 	user  = GetEnvValue("DB_USER")
 	password = GetEnvValue("DB_PASSWORD")
 	database = GetEnvValue("DB_DATABASE")
+    Db *gorm.DB
 )
 
 func checkError (err error) bool{
@@ -39,7 +40,7 @@ func ConnectDb () (*gorm.DB, error){
 	//Converts string port from env to port number
 	var _, err= strconv.Atoi(port);
 	if err != nil {
-		log.Fatal("Failed to convert port to string")
+		log.Fatal("Error converting string port to int")
 	}
 	
 	//Postres Connection details
@@ -49,6 +50,8 @@ func ConnectDb () (*gorm.DB, error){
 	if checkError(err) {
 		return nil, err
 	}
+	db.AutoMigrate(&models.User{})
 	return db, nil;
 }
+
 
