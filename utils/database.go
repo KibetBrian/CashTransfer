@@ -1,15 +1,15 @@
 package utils
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
-	_ "strconv"
+
 	"github.com/joho/godotenv"
-	_ "gorm.io/driver/postgres"
-	_ "gorm.io/gorm"
+	_ "github.com/lib/pq"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 var (
 	host = GetEnvValue("DB_HOST")
@@ -19,6 +19,13 @@ var (
 	database = GetEnvValue("DB_DATABASE")
 )
 
+func checkError (err error) bool{
+	if err != nil {
+		return err!=nil
+	}
+	return false
+}
+
 func GetEnvValue (key string) string {
 	err := godotenv.Load();
 	if err != nil {
@@ -27,26 +34,21 @@ func GetEnvValue (key string) string {
 	return os.Getenv(key);
 }
 
-func main (){
+func ConnectDb () (*gorm.DB, error){
 
-	var intPort, err= strconv.Atoi(GetEnvValue("DB_PORT"));
+	//Converts string port from env to port number
+	var _, err= strconv.Atoi(port);
 	if err != nil {
 		log.Fatal("Failed to convert port to string")
 	}
-
-	psqlInfo :=  fmt.Sprintf("host =%s, port=%d, user=%s, password=%s, database=%s, sslmode=disable", host,intPort, user, password, database)
-
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
+	
+	//Postres Connection details
+	psqlInfo :=  fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",host,port,user,password,database)
+	db, err := gorm.Open(postgres.Open(psqlInfo), &gorm.Config{})
+	
+	if checkError(err) {
+		return nil, err
 	}
-	err =db.Ping();
-	if err != nil {
-		panic(err)
-	}
-	fmt.Print("Database Connected")
-
-	defer db.Close()
-	fmt.Print(GetEnvValue("DB_HOST"))
+	return db, nil;
 }
 
