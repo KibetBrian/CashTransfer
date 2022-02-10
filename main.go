@@ -5,9 +5,6 @@ import (
 	"github.com/KibetBrian/fisa/configs"
 )
 
-
-
-
 func main (){
 	routes.Routes();
 	configs.ConnectDb();

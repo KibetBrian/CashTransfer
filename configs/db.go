@@ -50,7 +50,8 @@ func ConnectDb () (*gorm.DB, error){
 	if checkError(err) {
 		return nil, err
 	}
-	db.AutoMigrate(&models.User{})
+	//Auto migrations
+	db.AutoMigrate(&models.User{}, &models.Account{}, &models.Transaction{})
 	return db, nil;
 }
 

@@ -9,8 +9,8 @@ import (
 	"github.com/KibetBrian/fisa/models"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"github.com/KibetBrian/fisa/utils"
 )
 
 var DB *gorm.DB
@@ -25,27 +25,12 @@ func validateEmail(address string) bool {
 	return err == nil
 }
 
-//Hash user plain text password
-func hashPassword(plainText string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(plainText), 10)
-	if err != nil {
-		return "", err
-	}
-	return string(bytes), nil
-}
-
-//Function to compare hashed password
-func compareHash(plainTextPassword, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(plainTextPassword))
-	return err == nil
-}
-
 func RegisterUser(c *gin.Context) {
-
+	
 	var user models.User
 	c.ShouldBindJSON(&user)
 	id := uuid.New()
-	user.Id = id
+	user.UserId = id
 	db, err := configs.ConnectDb()
 	DB = db
 	if err != nil {
@@ -64,9 +49,10 @@ func RegisterUser(c *gin.Context) {
 		c.JSON(409, gin.H{"Message": res.Error})
 		return
 	}
-	user.Password, _ = hashPassword(user.Password)
+	user.Password, _ = utils.HashPassword(user.Password)
 
 	//Insert user into db
+	db.AutoMigrate(&models.User{})
 	result := db.Create(&user)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"Error": result.Error})
@@ -84,7 +70,7 @@ func Login(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	if err := validateEmail(user.UserEmail); err != true {
+	if err := validateEmail(user.UserEmail); !err{
 		c.JSON(403, "Invalid email")
 		return
 	}
@@ -96,8 +82,7 @@ func Login(c *gin.Context) {
 		c.JSON(404, "Email not found")
 		return
 	}
-
-	isValid := compareHash(plainText, user.Password)
+	isValid := utils.CompareHash(plainText, user.Password)
 	if !isValid {
 		c.JSON(403, "Invalid password")
 		return
