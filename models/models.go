@@ -13,8 +13,9 @@ type User struct {
 	UserName  string    `json:"userName" gorm:"not null;"`
 	UserEmail string    `json:"userEmail" gorm:"unique; not null" `
 	Password  string    `json:"password" gorm:"not null;"`
-	CreatedAt time.Time `json:"created_at" gorm:"default:CURRENT_TIMESTAMP"`
-	UpdatedAt time.Time `json:"updated_at" gorm:"default:CURRENT_TIMESTAMP"`
+	CreatedAt time.Time `json:"createdAt" sql:"type:timestamp" gorm:"default:CURRENT_TIMESTAMP"`
+	UpdatedAt time.Time `json:"updatedAt" gorm:"default:CURRENT_TIMESTAMP"`
+	AccountId uuid.UUID `json:"AccountId"`
 }
 
 type Transaction struct {
@@ -28,9 +29,11 @@ type Transaction struct {
 
 type Account struct {
 	gorm.Model
+	ID int
 	AccountId    uuid.UUID       `json:"accountId" gorm:"primaryKey; unique; not null" `
 	Balance      decimal.Decimal `json:"accountBalance" gorm:"not null;"`
 	UserId       uuid.UUID       `json:"userId" gorm:"not null;"`
 	Transactions []*Transaction  `json:"accountTransactions" gorm:"-"`
 	Password     string
 }
+

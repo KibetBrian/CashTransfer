@@ -9,7 +9,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func findUserId (email string,Transaction *models.Transaction) {
+func findAccountId(email string,Transaction *models.Transaction) {
 	var user models.User
 	db, err := configs.ConnectDb();
 	if err != nil {
@@ -26,6 +26,6 @@ func Deposit(c *gin.Context){
 	id := uuid.New();
 	c.ShouldBindJSON(Transaction);
 	Transaction.TransactionId =id;
-	//recieverEmail := Transaction.Receiver;
+	
 	fmt.Println(Transaction);
 }

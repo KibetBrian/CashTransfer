@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"net/http"
 	"net/mail"
-
+	"time"
 	"github.com/KibetBrian/fisa/configs"
 	"github.com/KibetBrian/fisa/models"
+	"github.com/KibetBrian/fisa/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
-	"github.com/KibetBrian/fisa/utils"
 )
 
 var DB *gorm.DB
@@ -53,6 +53,7 @@ func RegisterUser(c *gin.Context) {
 
 	//Insert user into db
 	db.AutoMigrate(&models.User{})
+	user.CreatedAt=time.Now();
 	result := db.Create(&user)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"Error": result.Error})

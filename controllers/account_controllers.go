@@ -27,6 +27,7 @@ func CreateAccount(c *gin.Context) {
 	}
 	db.AutoMigrate(&models.Account{})
 	db.Create(&Account)
+	db.Model(&user).Update("account_id", Account.AccountId)
 	c.JSON(200, gin.H{"Message": "Account Created", "Account": Account})
 }
 
