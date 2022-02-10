@@ -59,7 +59,7 @@ func RegisterUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(200, "User Registered")
+	c.JSON(200, gin.H{"Message": "User Registered","User":user})
 }
 
 func Login(c *gin.Context) {
