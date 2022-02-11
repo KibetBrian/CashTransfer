@@ -3,21 +3,20 @@ CREATE TYPE "Currency" AS ENUM (
 );
 
 CREATE TABLE "users" (
-  "id" uuid,
-  "name" varchar,
-  "email" varchar,
+  "id" uuid NOT NULL,
+  "name" varchar NOT NULL,
+  "email" varchar NOT NULL,
   "phone" varchar,
   "createdAt" timestamptz DEFAULT (now()),
   "updatedAt" timestamptz DEFAULT (now())
 );
 
 CREATE TABLE "acconts" (
-  "id" uuid PRIMARY KEY,
+  "id" uuid PRIMARY KEY NOT NULL,
   "holderId" uuid,
-  "balance" decimal,
-  "currency" currency,
-  "created_at" timestamptz NOT NULL DEFAULT (now()),
-  "country_code" int
+  "balance" decimal NOT NULL,
+  "currency" USD,
+  "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "Transaction" (
