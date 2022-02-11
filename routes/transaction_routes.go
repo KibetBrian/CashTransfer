@@ -7,4 +7,5 @@ import (
 
 var TransactionRoutes = func (router *gin.Engine){
 	router.POST("/transaction/deposit", controllers.Deposit)
+	router.POST("/transaction/send", controllers.Send)
 }
