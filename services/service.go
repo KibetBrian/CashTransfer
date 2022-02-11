@@ -37,12 +37,21 @@ func Credit(receiverAccountId uuid.UUID, amount decimal.Decimal) (string, bool) 
 }
 
 func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount decimal.Decimal) (string, bool) {
-
+	db, err := configs.ConnectDb()
+	if err != nil {
+		panic (err)
+	}
+	db.Begin();
 	debitMessage, isDebitSuccessful := Debit(senderAccountId, amount)
 	if !isDebitSuccessful {
 		return debitMessage, false
 	}
 	_, isCreditSuccessful := Credit(receiverAccountId, amount)
+
+	if !isCreditSuccessful{
+		db.Rollback()
+	}
+	db.Commit()
 
 	if isCreditSuccessful && isDebitSuccessful {
 		return "Transaction Successful", true
