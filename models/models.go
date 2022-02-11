@@ -20,16 +20,16 @@ type User struct {
 
 type Transaction struct {
 	gorm.Model
-	TransactionId uuid.UUID  `json:"transactionId"`
-	Sender   uuid.UUID       `json:"senderId"`
-	Receiver uuid.UUID       `json:"receiverId"`
-	Amount   decimal.Decimal `json:"amount"`
-	Message  string          `json:"message"`
+	TransactionId uuid.UUID       `json:"transactionId"`
+	Sender        uuid.UUID       `json:"senderId"`
+	Receiver      uuid.UUID       `json:"receiverId"`
+	Amount        decimal.Decimal `json:"amount"`
+	Message       string          `json:"message"`
 }
 
 type Account struct {
 	gorm.Model
-	ID int
+	ID           int
 	AccountId    uuid.UUID       `json:"accountId" gorm:"primaryKey; unique; not null" `
 	Balance      decimal.Decimal `json:"accountBalance" gorm:"not null;"`
 	UserId       uuid.UUID       `json:"userId" gorm:"not null;"`
@@ -37,3 +37,9 @@ type Account struct {
 	Password     string
 }
 
+type TransactionRequest struct {
+	SenderEmail   string          `json:"senderEmail"`
+	ReceiverEmail string          `json:"receiverEmail"`
+	Amount        decimal.Decimal `json:"amount"`
+	Message       string          `json:"message"`
+}

@@ -8,5 +8,7 @@ import (
 func main (){
 	routes.Routes();
 	configs.ConnectDb();
+
+
 }
 

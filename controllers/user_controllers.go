@@ -2,15 +2,15 @@ package controllers
 
 import (
 	"fmt"
-	"net/http"
-	"net/mail"
-	"time"
 	"github.com/KibetBrian/fisa/configs"
 	"github.com/KibetBrian/fisa/models"
 	"github.com/KibetBrian/fisa/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"net/http"
+	"net/mail"
+	"time"
 )
 
 var DB *gorm.DB
@@ -26,7 +26,7 @@ func validateEmail(address string) bool {
 }
 
 func RegisterUser(c *gin.Context) {
-	
+
 	var user models.User
 	c.ShouldBindJSON(&user)
 	id := uuid.New()
@@ -53,14 +53,14 @@ func RegisterUser(c *gin.Context) {
 
 	//Insert user into db
 	db.AutoMigrate(&models.User{})
-	user.CreatedAt=time.Now();
+	user.CreatedAt = time.Now()
 	result := db.Create(&user)
 	if result.Error != nil {
 		c.JSON(500, gin.H{"Error": result.Error})
 		return
 	}
 
-	c.JSON(200, gin.H{"Message": "User Registered","User":user})
+	c.JSON(200, gin.H{"Message": "User Registered", "User": user})
 }
 
 func Login(c *gin.Context) {
@@ -71,7 +71,7 @@ func Login(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	if err := validateEmail(user.UserEmail); !err{
+	if err := validateEmail(user.UserEmail); !err {
 		c.JSON(403, "Invalid email")
 		return
 	}
