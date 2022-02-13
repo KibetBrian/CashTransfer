@@ -30,21 +30,21 @@ func RegisterUser(c *gin.Context) {
 	var user models.User
 	c.ShouldBindJSON(&user)
 	id := uuid.New()
-	user.UserId = id
+	user.Id = id
 	db, err := configs.ConnectDb()
 	DB = db
 	if err != nil {
 		fmt.Print("Error Connecting to the database")
 	}
 
-	isValid := validateEmail(user.UserEmail)
+	isValid := validateEmail(user.Email)
 	if !isValid {
 		c.JSON(400, "Invalid email")
 		return
 	}
 
 	//Check if email already exists
-	res := db.Where("user_email= ?", user.UserEmail).First(&user)
+	res := db.Where("user_email= ?", user.Email).First(&user)
 	if res.RowsAffected > 0 {
 		c.JSON(409, gin.H{"Message": res.Error})
 		return
@@ -71,14 +71,14 @@ func Login(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	if err := validateEmail(user.UserEmail); !err {
+	if err := validateEmail(user.Email); !err {
 		c.JSON(403, "Invalid email")
 		return
 	}
 
 	plainText := user.Password
 
-	res := db.Where("user_email= ?", user.UserEmail).First(&user)
+	res := db.Where("user_email= ?", user.Email).First(&user)
 	if res.RowsAffected < 1 {
 		c.JSON(404, "Email not found")
 		return

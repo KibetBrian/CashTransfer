@@ -27,7 +27,7 @@ func Deposit(c *gin.Context) {
 	var Transaction models.Transaction
 	id := uuid.New()
 	c.ShouldBindJSON(&TransactionReq)
-	Transaction.TransactionId = id
+	Transaction.Id = id
 	receiverAccountId, isValid := findAccountId(TransactionReq.ReceiverEmail)
 	if !isValid {
 		c.JSON(200, "Seems we don't have users with that email")

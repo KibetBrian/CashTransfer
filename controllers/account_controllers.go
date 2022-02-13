@@ -13,21 +13,21 @@ func CreateAccount(c *gin.Context) {
 	var user models.User
 	c.ShouldBindJSON(&Account)
 	id := uuid.New()
-	Account.AccountId = id
+	Account.Id = id
 	Account.Password, _ = utils.HashPassword(Account.Password)
 	db, err := configs.ConnectDb()
 	if err != nil {
 		c.JSON(500, "Error connecting to the database")
 		return
 	}
-	res := db.Where("user_id=?", Account.UserId).First(&user)
+	res := db.Where("user_id=?", Account.Id).First(&user)
 	if res.RowsAffected < 1 {
 		c.JSON(404, "No such account id")
 		return
 	}
 	db.AutoMigrate(&models.Account{})
 	db.Create(&Account)
-	db.Model(&user).Update("account_id", Account.AccountId)
+	db.Model(&user).Update("account_id", Account.Id)
 	c.JSON(200, gin.H{"Message": "Account Created", "Account": Account})
 }
 

@@ -3,7 +3,7 @@ CREATE TYPE "Currency" AS ENUM (
 );
 
 CREATE TABLE "users" (
-  "id" uuid NOT NULL,
+  "id" uuid UNIQUE NOT NULL,
   "name" varchar NOT NULL,
   "email" varchar NOT NULL,
   "phone" varchar,
@@ -18,26 +18,26 @@ CREATE TABLE "accounts" (
   "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
-CREATE TABLE "Transaction" (
+CREATE TABLE "transactions" (
   "transactionId" uuid NOT NULL,
-  "from" uuid NOT NULL,
-  "to" uuid NOT NULL,
+  "sender" uuid NOT NULL,
+  "reciever" uuid NOT NULL,
   "amount" decimal NOT NULL,
   "created_at" timestamptz DEFAULT (now())
 );
 
 ALTER TABLE "accounts" ADD FOREIGN KEY ("holderId") REFERENCES "users" ("id");
 
-ALTER TABLE "Transaction" ADD FOREIGN KEY ("from") REFERENCES "accounts" ("id");
+ALTER TABLE "transactions" ADD FOREIGN KEY ("sender") REFERENCES "accounts" ("id");
 
-ALTER TABLE "Transaction" ADD FOREIGN KEY ("to") REFERENCES "accounts" ("id");
+ALTER TABLE "transactions" ADD FOREIGN KEY ("reciever") REFERENCES "accounts" ("id");
 
 CREATE INDEX ON "users" ("id");
 
 CREATE INDEX ON "accounts" ("holderId");
 
-CREATE INDEX ON "Transaction" ("from");
+CREATE INDEX ON "transactions" ("sender");
 
-CREATE INDEX ON "Transaction" ("to");
+CREATE INDEX ON "transactions" ("reciever");
 
-CREATE INDEX ON "Transaction" ("transactionId");
+CREATE INDEX ON "transactions" ("transactionId");
