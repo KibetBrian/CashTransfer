@@ -15,7 +15,7 @@ func findAccountId(email string) (uuid.UUID, bool) {
 	if err != nil {
 		panic(err)
 	}
-	res := db.Where("user_email = ?", email).First(&user)
+	res := db.Where("email = ?", email).First(&user)
 	if res.RowsAffected < 1 {
 		return uuid.Nil, false
 	}

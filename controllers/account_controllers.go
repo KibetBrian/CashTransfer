@@ -20,11 +20,13 @@ func CreateAccount(c *gin.Context) {
 		c.JSON(500, "Error connecting to the database")
 		return
 	}
-	res := db.Where("user_id=?", Account.Id).First(&user)
+
+	res := db.Where("id=?",Account.HolderId ).First(&user)
 	if res.RowsAffected < 1 {
-		c.JSON(404, "No such account id")
+		c.JSON(404, gin.H{"Message": "No such user", "User":user})
 		return
 	}
+
 	db.AutoMigrate(&models.Account{})
 	db.Create(&Account)
 	db.Model(&user).Update("account_id", Account.Id)

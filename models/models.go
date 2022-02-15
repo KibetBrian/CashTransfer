@@ -31,9 +31,9 @@ type Account struct {
 	gorm.Model
 	Id    uuid.UUID       `json:"accountId" gorm:"primaryKey; unique; not null" `
 	Balance      decimal.Decimal `json:"accountBalance" gorm:"not null;"`
-	HolderId     uuid.UUID       `json:"userId" gorm:"not null;"`
+	HolderId     uuid.UUID       `json:"holderId" gorm:"not null;"`
 	Transactions []*Transaction  `json:"accountTransactions" gorm:"-"`
-	Password     string
+	Password     string			 `json:"password" gorm:"not null;"`
 }
 
 type TransactionRequest struct {

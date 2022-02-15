@@ -7,8 +7,8 @@ CREATE TABLE "users" (
   "name" varchar NOT NULL,
   "email" varchar NOT NULL,
   "phone" varchar,
-  "createdAt" timestamptz DEFAULT (now()),
-  "updatedAt" timestamptz DEFAULT (now())
+  "createdAt" timestamptz NOT NULL DEFAULT (now()),
+  "updatedAt" timestamptz NOT NULL DEFAULT (now())
 );
 
 CREATE TABLE "accounts" (
@@ -23,7 +23,7 @@ CREATE TABLE "transactions" (
   "sender" uuid NOT NULL,
   "reciever" uuid NOT NULL,
   "amount" decimal NOT NULL,
-  "created_at" timestamptz DEFAULT (now())
+  "created_at" timestamptz NOT NULL DEFAULT (now())
 );
 
 ALTER TABLE "accounts" ADD FOREIGN KEY ("holderId") REFERENCES "users" ("id");
