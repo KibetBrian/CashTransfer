@@ -65,7 +65,7 @@ func Deposit(accountId uuid.UUID, amount decimal.Decimal)(string, bool){
 	if err != nil {
 		panic(err)
 	}
-	db.Where("account_id=?", accountId).First(&account);
+	db.Where("id=?", accountId).First(&account);
 	account.Balance=account.Balance.Add(amount);
 	db.Save(&account)
 	return "Deposit Successful", true
