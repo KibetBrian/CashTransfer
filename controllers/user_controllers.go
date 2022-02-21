@@ -25,6 +25,7 @@ func validateEmail(address string) bool {
 	return err == nil
 }
 
+//Gets user input, validates and adds to the database
 func RegisterUser(c *gin.Context) {
 
 	var user models.User
