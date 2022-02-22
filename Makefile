@@ -39,3 +39,7 @@ sc:
 #PSQL shell
 ps:
 	docker exec -it fisa-database psql -U briankibet
+
+#Test 
+test:
+	go test -v -cover ./...
