@@ -12,7 +12,7 @@ import (
 )
 
 //Test user creation with random data
-func TestCreateAccount(t *testing.T){
+func TestUserRegistration(t *testing.T){
 	testUser := &models.User{
 		Name: utils.GenerateRandomUserName(),
 		Email: utils.GenerateRandomEmail(),
