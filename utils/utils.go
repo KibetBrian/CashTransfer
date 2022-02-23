@@ -4,12 +4,17 @@ import (
 	"math/rand"
 	"strings"
 	"time"
-
+	"net/mail"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func init(){
 	rand.Seed(time.Now().UnixNano())
+}
+//Check user email input validity
+func ValidateEmail(address string) bool {
+	_, err := mail.ParseAddress(address)
+	return err == nil
 }
 
 //Hash user plain text password
@@ -81,11 +86,14 @@ func GenerateRandomPassword (min, max int64) string {
 func GenerateRandomEmail () string{
 	const at = "@"
 	var sb strings.Builder
-	domains := []string{".com", ".co.ke",".net",".tech"}
-	name := GenerateRandString(int(GenerateRandInt(0,50)));
+	domains := []string{".com",".net",".tech"}
+	providers:=[]string{"gmail","outlook","yahoo","icloud"}
+	name := GenerateRandString(int(GenerateRandInt(0,64)));
 	domain:=domains[rand.Intn(len(domains))]
+	provider := providers[rand.Intn(len(domains))]
 	sb.WriteString(name)
 	sb.WriteString(at)
+	sb.WriteString(provider)
 	sb.WriteString(domain)
 	return sb.String()
 }

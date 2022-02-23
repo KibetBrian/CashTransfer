@@ -7,22 +7,12 @@ import (
 	"github.com/KibetBrian/fisa/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"gorm.io/gorm"
 	"net/http"
-	"net/mail"
 	"time"
 )
 
-var DB *gorm.DB
-
 func SayHello(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{"Message": "Hello"})
-}
-
-//Validate clientside email input
-func validateEmail(address string) bool {
-	_, err := mail.ParseAddress(address)
-	return err == nil
 }
 
 //Gets user input, validates and adds to the database
@@ -30,20 +20,16 @@ func RegisterUser(c *gin.Context) {
 
 	var user models.User
 	c.ShouldBindJSON(&user)
-	id := uuid.New()
-	user.Id = id
+	user.Id = uuid.New()
 	db, err := configs.ConnectDb()
-	DB = db
 	if err != nil {
 		fmt.Print("Error Connecting to the database")
 	}
-
-	isValid := validateEmail(user.Email)
+	isValid := utils.ValidateEmail(user.Email)
 	if !isValid {
 		c.JSON(400, "Invalid email")
 		return
 	}
-
 	//Check if email already exists
 	res := db.Where("user_email= ?", user.Email).First(&user)
 	if res.RowsAffected > 0 {
@@ -72,13 +58,12 @@ func Login(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	if err := validateEmail(user.Email); !err {
+	if err := utils.ValidateEmail(user.Email); !err {
 		c.JSON(403, "Invalid email")
 		return
 	}
 
 	plainText := user.Password
-
 	res := db.Where("user_email= ?", user.Email).First(&user)
 	if res.RowsAffected < 1 {
 		c.JSON(404, "Email not found")
@@ -90,5 +75,4 @@ func Login(c *gin.Context) {
 		return
 	}
 	c.JSON(200, "Login Successful")
-
 }

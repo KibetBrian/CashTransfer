@@ -7,6 +7,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
+//Subtracts the amount from sender accounts
 func Debit(senderAccountId uuid.UUID, amount decimal.Decimal) (string, bool) {
 	db, err := configs.ConnectDb()
 	var account models.Account
@@ -24,23 +25,29 @@ func Debit(senderAccountId uuid.UUID, amount decimal.Decimal) (string, bool) {
 	return "Successful Debit", true
 }
 
+//Adds amount to the receivers account
 func Credit(receiverAccountId uuid.UUID, amount decimal.Decimal) (string, bool) {
 	var account models.Account
+
 	db, err := configs.ConnectDb()
 	if err != nil {
 		panic(err)
 	}
+
 	db.Where("account_id=?", receiverAccountId).First(&account)
 	account.Balance = amount.Add(account.Balance)
 	db.Save(&account)
+
 	return "Credit Successful", true
 }
 
+//Function to perform transaction
 func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount decimal.Decimal) (string, bool) {
 	db, err := configs.ConnectDb()
 	if err != nil {
 		panic (err)
 	}
+	//Initialize transactions
 	db.Begin();
 	debitMessage, isDebitSuccessful := Debit(senderAccountId, amount)
 	if !isDebitSuccessful {
@@ -49,8 +56,10 @@ func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount 
 	_, isCreditSuccessful := Credit(receiverAccountId, amount)
 
 	if !isCreditSuccessful{
+		//Rollback if there was an error
 		db.Rollback()
 	}
+	//Commmit transaction
 	db.Commit()
 
 	if isCreditSuccessful && isDebitSuccessful {
@@ -59,6 +68,7 @@ func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount 
 	return "Transaction Successful", true
 }
 
+//Adds amount to the account id received
 func Deposit(accountId uuid.UUID, amount decimal.Decimal)(string, bool){
 	var account models.Account 
 	db, err := configs.ConnectDb()

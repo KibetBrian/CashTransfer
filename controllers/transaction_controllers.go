@@ -22,6 +22,7 @@ func findAccountId(email string) (uuid.UUID, bool) {
 	return user.AccountId, true
 }
 
+//Adds amount to the account
 func Deposit(c *gin.Context) {
 	var TransactionReq models.TransactionRequest
 	var Transaction models.Transaction
@@ -43,27 +44,33 @@ func Deposit(c *gin.Context) {
 
 }
 
+//Transfer amount to another account
 func Send (c *gin.Context){
 	var TransactionReq models.TransactionRequest
 	c.ShouldBindJSON(&TransactionReq);
+
 	receiverAccountId, isValid := findAccountId(TransactionReq.ReceiverEmail)
 	if !isValid{
 		c.JSON(404, gin.H{"Message":"It seems we don't have a user with that email", "Email":TransactionReq.ReceiverEmail})
 		return
 	}
+
 	senderAccountId, isValid := findAccountId(TransactionReq.SenderEmail)
 	if !isValid {
 		c.JSON(403, gin.H{"Message":"Check credential and try again"})
 		return
 	}
+
 	if receiverAccountId == senderAccountId{
 		c.JSON(403, gin.H{"Message": "You cannot send money to yourself"})
 		return
 	}
+	//If the credentials are corrent, send the account ids' to services package for processing
 	message, successful:=services.DoubleEntry(senderAccountId, receiverAccountId,TransactionReq.Amount);
 	if !successful{
 		c.JSON(403, message);
 		return
 	}
+	
 	c.JSON(200, gin.H{"Message": message})
 }
