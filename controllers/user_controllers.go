@@ -6,7 +6,7 @@ import (
 	"github.com/KibetBrian/fisa/models"
 	"github.com/KibetBrian/fisa/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"github.com/satori/go.uuid"
 	"net/http"
 	"time"
 )
@@ -20,7 +20,7 @@ func RegisterUser(c *gin.Context) {
 
 	var user models.User
 	c.ShouldBindJSON(&user)
-	user.Id = uuid.New()
+	user.Id = uuid.NewV4()
 	db, err := configs.ConnectDb()
 	if err != nil {
 		fmt.Print("Error Connecting to the database")

@@ -5,7 +5,7 @@ import (
 	"github.com/KibetBrian/fisa/models"
 	"github.com/KibetBrian/fisa/services"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"github.com/satori/go.uuid"
 )
 
 //Finds account id associated with particular email
@@ -26,7 +26,7 @@ func findAccountId(email string) (uuid.UUID, bool) {
 func Deposit(c *gin.Context) {
 	var TransactionReq models.TransactionRequest
 	var Transaction models.Transaction
-	id := uuid.New()
+	id := uuid.NewV4()
 	c.ShouldBindJSON(&TransactionReq)
 	Transaction.Id = id
 	receiverAccountId, isValid := findAccountId(TransactionReq.ReceiverEmail)

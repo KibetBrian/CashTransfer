@@ -5,14 +5,14 @@ import (
 	"github.com/KibetBrian/fisa/models"
 	"github.com/KibetBrian/fisa/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
+	"github.com/satori/go.uuid"
 )
 
 func CreateAccount(c *gin.Context) {
 	var Account models.Account
 	var user models.User
 	c.ShouldBindJSON(&Account)
-	id := uuid.New()
+	id := uuid.NewV4()
 	Account.Id = id
 	Account.Password, _ = utils.HashPassword(Account.Password)
 	db, err := configs.ConnectDb()

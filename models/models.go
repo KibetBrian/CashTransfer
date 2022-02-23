@@ -1,7 +1,7 @@
 package models
 
 import (
-	"github.com/google/uuid"
+	"github.com/satori/go.uuid"
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm"
 	"time"

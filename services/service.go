@@ -3,7 +3,7 @@ package services
 import (
 	"github.com/KibetBrian/fisa/configs"
 	"github.com/KibetBrian/fisa/models"
-	"github.com/google/uuid"
+	"github.com/satori/go.uuid"
 	"github.com/shopspring/decimal"
 	"gorm.io/gorm/clause"
 )
@@ -65,7 +65,7 @@ func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount 
 	//Commmit transaction
 	db.Commit()
 	transaction := &models.Transaction{
-		Id:                     uuid.New(),
+		Id:                    uuid.NewV4(),
 		Amount:                 amount,
 		Sender:                 senderAccountId,
 		SenderAccountBalance:   debitBalance,
@@ -91,7 +91,7 @@ func Deposit(accountId uuid.UUID, amount decimal.Decimal) (string, bool) {
 	account.Balance = account.Balance.Add(amount)
 	db.Save(&account)
 	transaction := &models.Transaction{
-		Id:                     uuid.New(),
+		Id:                     uuid.NewV4(),
 		Receiver:               accountId,
 		ReceiverAccountBalance: account.Balance,
 		Amount:                 amount,

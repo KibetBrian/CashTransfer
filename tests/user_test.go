@@ -7,7 +7,7 @@ import (
 	"github.com/KibetBrian/fisa/configs"
 	"github.com/KibetBrian/fisa/models"
 	"github.com/KibetBrian/fisa/utils"
-	"github.com/google/uuid"
+	"github.com/satori/go.uuid"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,7 +17,7 @@ func TestRegisterUser(t *testing.T){
 		Name: utils.GenerateRandomUserName(),
 		Email: utils.GenerateRandomEmail(),
 		Password: utils.GenerateRandomPassword(6,48),
-		Id: uuid.New(),
+		Id: uuid.NewV4(),
 	}
 
 	db, err := configs.ConnectDb()
