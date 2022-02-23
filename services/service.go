@@ -1,12 +1,11 @@
 package services
 
 import (
-	"fmt"
-
 	"github.com/KibetBrian/fisa/configs"
 	"github.com/KibetBrian/fisa/models"
 	"github.com/google/uuid"
 	"github.com/shopspring/decimal"
+	"gorm.io/gorm/clause"
 )
 
 //Subtracts the amount from sender accounts
@@ -16,8 +15,7 @@ func Debit(senderAccountId uuid.UUID, amount decimal.Decimal) (string, decimal.D
 	if err != nil {
 		panic(err)
 	}
-	db.Where("id=?", senderAccountId).First(&account)
-	fmt.Println(senderAccountId)
+	db.Where("id=?", senderAccountId).First(&account).Clauses(clause.Locking{Strength: "Update"})
 	zero := decimal.NewFromInt(0)
 	res := account.Balance.Sub(amount)
 	if res.LessThan(zero) {
@@ -39,7 +37,7 @@ func Credit(receiverAccountId uuid.UUID, amount decimal.Decimal) (string, decima
 	if err != nil {
 		panic(err)
 	}
-	db.Where("account_id=?", receiverAccountId).First(&account)
+	db.Where("account_id=?", receiverAccountId).First(&account).Clauses(clause.Locking{Strength: "Update"})
 	account.Balance = amount.Add(account.Balance)
 	db.Save(&account)
 	return "Credit successful", account.Balance, true
@@ -62,6 +60,7 @@ func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount 
 	if !isCreditSuccessful {
 		//Rollback if there was an error
 		db.Rollback()
+		return "Transaction failed", false
 	}
 	//Commmit transaction
 	db.Commit()

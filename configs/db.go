@@ -36,7 +36,7 @@ func GetEnvValue (key string) string {
 }
 
 func ConnectDb () (*gorm.DB, error){
-	
+
 	//Converts string port from env to port number
 	var _, err= strconv.Atoi(port);
 	if err != nil {
