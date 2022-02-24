@@ -44,7 +44,7 @@ func Credit(receiverAccountId uuid.UUID, amount decimal.Decimal) (string, decima
 }
 
 //Function to perform transaction
-func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount decimal.Decimal) (string, bool) {
+func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount decimal.Decimal) (*models.Transaction,string, bool) {
 	db, err := configs.ConnectDb()
 	if err != nil {
 		panic(err)
@@ -53,14 +53,14 @@ func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount 
 	db.Begin()
 	debitMessage, debitBalance, isDebitSuccessful := Debit(senderAccountId, amount)
 	if !isDebitSuccessful {
-		return debitMessage, false
+		return nil, debitMessage, false
 	}
 	_, creditBalance, isCreditSuccessful := Credit(receiverAccountId, amount)
 
 	if !isCreditSuccessful {
 		//Rollback if there was an error
 		db.Rollback()
-		return "Transaction failed", false
+		return nil, "Transaction failed", false
 	}
 	//Commmit transaction
 	db.Commit()
@@ -74,10 +74,12 @@ func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount 
 	}
 	//Record the transactions to the database
 	saveTransaction(transaction)
+
+
 	if isCreditSuccessful && isDebitSuccessful {
-		return "Transaction Successful", true
+		return transaction, "Transaction Successful", true
 	}
-	return "Transaction Successful", true
+	return transaction, "Transaction Successful", true
 }
 
 //Takes account id as input and adds amount to it

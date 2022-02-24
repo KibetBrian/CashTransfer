@@ -66,11 +66,11 @@ func Send (c *gin.Context){
 		return
 	}
 	//If the credentials are corrent, send the account ids' to services package for processing
-	message, successful:=services.DoubleEntry(senderAccountId, receiverAccountId,TransactionReq.Amount);
+	transaction, message, successful:=services.DoubleEntry(senderAccountId, receiverAccountId,TransactionReq.Amount);
 	if !successful{
 		c.JSON(403, message);
 		return
 	}
 	
-	c.JSON(200, gin.H{"Message": message})
+	c.JSON(200, gin.H{"Message": message, "Transaction: ": transaction})
 }

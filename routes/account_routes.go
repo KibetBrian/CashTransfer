@@ -8,4 +8,5 @@ import(
 var AcccountRoutes = func(router *gin.Engine) {
 	router.POST("/account/create", controllers.CreateAccount)
 	router.GET("/account/delete", controllers.DeleteAccount)
+	router.GET("/account/account", controllers.GetAccount)
 }

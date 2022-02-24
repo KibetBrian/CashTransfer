@@ -3,10 +3,12 @@ package controllers
 import (
 	"github.com/KibetBrian/fisa/configs"
 	"github.com/KibetBrian/fisa/models"
+	"github.com/KibetBrian/fisa/services"
 	"github.com/KibetBrian/fisa/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/satori/go.uuid"
 )
+
 
 func CreateAccount(c *gin.Context) {
 	var Account models.Account
@@ -31,6 +33,20 @@ func CreateAccount(c *gin.Context) {
 	db.Create(&Account)
 	db.Model(&user).Update("account_id", Account.Id)
 	c.JSON(200, gin.H{"Message": "Account Created", "Account": Account})
+}
+
+
+func GetAccount (c *gin.Context){
+	var AccountReq models.AccountReq
+	c.ShouldBindJSON(&AccountReq)
+
+	//Gives the data to services/GetAccount for processing
+	isPresent, account := services.GetAccount(AccountReq.AccountId)
+	if !isPresent{
+		c.JSON(404, gin.H{"Message: ": "Seems we don't have an account with such id", "AccountId: ":AccountReq.AccountId})
+		return
+	}
+	c.JSON(200, gin.H{"Account": account})
 }
 
 func DeleteAccount(c *gin.Context) {

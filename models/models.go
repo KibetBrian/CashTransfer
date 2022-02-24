@@ -7,6 +7,10 @@ import (
 	"time"
 )
 
+type AccountReq struct{
+	AccountId uuid.UUID `json:"accountId"`
+}
+
 type User struct {
 	gorm.Model
 	Id        uuid.UUID `json:"userId" gorm:"primaryKey; not null;"`
