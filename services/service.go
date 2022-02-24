@@ -15,7 +15,7 @@ func Debit(senderAccountId uuid.UUID, amount decimal.Decimal) (string, decimal.D
 	if err != nil {
 		panic(err)
 	}
-	db.Where("id=?", senderAccountId).First(&account).Clauses(clause.Locking{Strength: "Update"})
+	db.Where("id=?", senderAccountId).Clauses(clause.Locking{Strength: "Update"}).First(&account)
 	zero := decimal.NewFromInt(0)
 	res := account.Balance.Sub(amount)
 	if res.LessThan(zero) {
@@ -37,7 +37,7 @@ func Credit(receiverAccountId uuid.UUID, amount decimal.Decimal) (string, decima
 	if err != nil {
 		panic(err)
 	}
-	db.Where("account_id=?", receiverAccountId).First(&account).Clauses(clause.Locking{Strength: "Update"})
+	db.Where("id=?", receiverAccountId).Clauses(clause.Locking{Strength: "Update"}).First(&account)
 	account.Balance = amount.Add(account.Balance)
 	db.Save(&account)
 	return "Credit successful", account.Balance, true
