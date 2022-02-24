@@ -70,7 +70,6 @@ func Send (c *gin.Context){
 	if !successful{
 		c.JSON(403, message);
 		return
-	}
-	
+	}	
 	c.JSON(200, gin.H{"Message": message, "Transaction: ": transaction})
 }
