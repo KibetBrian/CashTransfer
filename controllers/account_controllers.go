@@ -41,7 +41,7 @@ func GetAccount (c *gin.Context){
 	c.ShouldBindJSON(&AccountReq)
 
 	//Gives the data to services/GetAccount for processing
-	isPresent, account := services.GetAccount(AccountReq.AccountId)
+	account, isPresent := services.GetAccount(AccountReq.AccountId)
 	if !isPresent{
 		c.JSON(404, gin.H{"Message: ": "Seems we don't have an account with such id", "AccountId: ":AccountReq.AccountId})
 		return

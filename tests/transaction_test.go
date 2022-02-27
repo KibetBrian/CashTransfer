@@ -14,7 +14,14 @@ import (
 func TestTransaction(t *testing.T){
 	accountId1, _ := uuid.FromString("d04253b5-e484-4874-886a-b1b471b64b6b")
 	accountId2, _ := uuid.FromString("447e1d99-7992-4442-8330-ae9620e2f0ad")
-	routines := 10;
+
+	account1, success:= services.GetAccount(accountId1)
+	require.True(t, success)
+
+	account2, success := services.GetAccount(accountId2)
+	require.True(t, success)
+
+	routines := 1;
 	isSuccessfulChan := make(chan bool)
 	stringRes := make(chan string)
 	transactionChan := make(chan *models.Transaction)
@@ -38,7 +45,8 @@ func TestTransaction(t *testing.T){
 		require.NotEmpty(t, transaction.CreatedAt)
 		require.NotEmpty(t, transaction.Id)
 		require.Equal(t, transaction.Amount,decimal.NewFromInt32(amount))
-		require.Equal(t, transaction.Sender, transaction.Receiver)	
+		require.Equal(t, account1.Balance, transaction.SenderAccountBalance.Add(decimal.NewFromInt32(amount)))
+		require.Equal(t, account2.Balance, transaction.ReceiverAccountBalance.Sub(decimal.NewFromInt32(amount)))
 	}
 }
 func generate () int32{

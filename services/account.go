@@ -9,7 +9,7 @@ import (
 )
 
 //Takes account id as input and return account object from the database
-func GetAccount(id uuid.UUID) (bool, *models.Account){
+func GetAccount(id uuid.UUID) (*models.Account, bool){
 	var account models.Account
 	db, err := configs.ConnectDb()
 	if err != nil{
@@ -17,7 +17,7 @@ func GetAccount(id uuid.UUID) (bool, *models.Account){
 	}
 	res := db.Where("id=?", id).First(&account)
 	if res.RowsAffected < 1{
-		return false, nil
+		return nil, false
 	}
-	return true, &account
+	return &account, true
 }
