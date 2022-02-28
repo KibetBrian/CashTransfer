@@ -28,7 +28,7 @@ func checkError (err error) bool{
 }
 
 func GetEnvValue (key string) string {
-	err := godotenv.Load();
+	err := godotenv.Load("../.env");
 	if err != nil {
 		log.Fatal (err)
 	}

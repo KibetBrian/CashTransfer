@@ -65,7 +65,7 @@ func Send (c *gin.Context){
 		c.JSON(403, gin.H{"Message": "You cannot send money to yourself"})
 		return
 	}
-	//If the credentials are corrent, send the account ids' to services package for processing
+	//If the credentials are correct	, send the account ids' to services package for processing
 	transaction, message, successful:=services.DoubleEntry(senderAccountId, receiverAccountId,TransactionReq.Amount);
 	if !successful{
 		c.JSON(403, message);

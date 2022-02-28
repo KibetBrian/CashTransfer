@@ -21,7 +21,7 @@ func TestTransaction(t *testing.T){
 	account2, success := services.GetAccount(accountId2)
 	require.True(t, success)
 
-	routines := 1;
+	routines := 10;
 	isSuccessfulChan := make(chan bool)
 	stringRes := make(chan string)
 	transactionChan := make(chan *models.Transaction)

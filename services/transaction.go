@@ -1,7 +1,6 @@
 package services
 
 import (
-	"log"
 
 	"github.com/KibetBrian/fisa/configs"
 	"github.com/KibetBrian/fisa/models"
@@ -11,13 +10,11 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-//Subtracts the amount from sender accounts
+//Subtracts the amount from sender account
 func Debit(senderAccountId uuid.UUID, amount decimal.Decimal, db *gorm.DB, tx *gorm.DB) (string, decimal.Decimal, bool) {
 
 	var account models.Account
-	log.Println("Debit query started")
 	tx.Clauses(clause.Locking{Strength: "NO KEY UPDATE"}).Where("id=?", senderAccountId).First(&account)
-	log.Println("Debit query finished")
 	zero := decimal.NewFromInt(0)
 
 	res := account.Balance.Sub(amount)
@@ -25,12 +22,13 @@ func Debit(senderAccountId uuid.UUID, amount decimal.Decimal, db *gorm.DB, tx *g
 		return "Insufficient funds", account.Balance, false
 	}
 
-	if account.Balance.LessThan(zero) {
-		return "You can only transfer amount grater than zero", account.Balance, false
+	if amount.LessThan(zero) {
+		return "The amount to be sent is less than threshhold", account.Balance, false
 	}
 
 	account.Balance = account.Balance.Sub(amount)
-	db.Save(&account)
+	tx.Save(&account)
+
 	return "Debit Successful", account.Balance, true
 }
 
@@ -38,12 +36,10 @@ func Debit(senderAccountId uuid.UUID, amount decimal.Decimal, db *gorm.DB, tx *g
 func Credit(receiverAccountId uuid.UUID, amount decimal.Decimal, db *gorm.DB, tx *gorm.DB) (string, decimal.Decimal, bool) {
 
 	var account models.Account
-	log.Println("Credit query started...")
 	tx.Clauses(clause.Locking{Strength: "NO KEY UPDATE"}).Where("id=?", receiverAccountId).First(&account)
-	log.Println("Credit query finished")
 
 	account.Balance = amount.Add(account.Balance)
-	db.Save(&account)
+	tx.Save(&account)
 
 	return "Credit successful", account.Balance, true
 }
@@ -55,7 +51,6 @@ func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount 
 		panic(err)
 	}
 	//Initialize transaction
-	log.Println("Initialize db.Begin()")
 	tx := db.Begin()
 	defer func (){
 		if r :=recover(); r != nil{
@@ -76,7 +71,6 @@ func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount 
 	}
 	//Commmit transaction
 	tx.Commit()
-	log.Println("Transaction Message", tx.Commit().Error)
 	transaction := &models.Transaction{
 		Id:                     uuid.NewV4(),
 		Amount:                 amount,
