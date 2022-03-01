@@ -30,7 +30,7 @@ func TestTransaction(t *testing.T){
 	for i:=0; i<routines; i++{
 		go func(){
 			transaction, res, isSuccessful :=services.DoubleEntry(accountId1, accountId2, decimal.NewFromInt32(amount))
-			isSuccessfulChan <- isSuccessful
+  			isSuccessfulChan <- isSuccessful
 			transactionChan <- transaction;
 			stringRes <-res
 		}()
@@ -41,14 +41,17 @@ func TestTransaction(t *testing.T){
 		transaction := <-transactionChan
 		require.True(t, successState)
 		require.NotEmpty(t,transaction)
+		require.NotEmpty(t, transaction.Id)
 		require.NotEmpty(t, transaction.Sender)
 		require.NotEmpty(t, transaction.CreatedAt)
-		require.NotEmpty(t, transaction.Id)
+		require.NotEmpty(t, transaction.SenderAccountBalance)
+		require.NotEmpty(t, transaction.ReceiverAccountBalance)
 		require.Equal(t, transaction.Amount,decimal.NewFromInt32(amount))
 		require.Equal(t, account1.Balance, transaction.SenderAccountBalance.Add(decimal.NewFromInt32(amount)))
 		require.Equal(t, account2.Balance, transaction.ReceiverAccountBalance.Sub(decimal.NewFromInt32(amount)))
 	}
 }
+//Generate random int32 between 1 and 1-
 func generate () int32{
 	num := utils.GenerateRandInt(1, 10)
 	return int32(num)
