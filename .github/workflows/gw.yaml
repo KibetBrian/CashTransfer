@@ -43,7 +43,7 @@ jobs:
         which migrate
 
     - name: Migration
-      run: migrate -path $(pwd)../../database/migrations  -database "postgres://briankibet:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/fisa?sslmode=disable" -verbose up
+      run: migrate -path $(pwd)/../../database/migrations  -database "postgres://briankibet:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/fisa?sslmode=disable" -verbose up
 
     - name: Test
       run: make test
