@@ -17,7 +17,7 @@ jobs:
         env:
           POSTGRES_USER: kibetbrian
           POSTGRES_DB: fisa
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         ports:
           - 5432:5432
         options: >-
