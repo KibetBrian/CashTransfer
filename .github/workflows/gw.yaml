@@ -42,9 +42,8 @@ jobs:
         sudo mv migrate /usr/bin/migrate
         which migrate
 
-
     - name: Migration
-      run: make migrateup
+      run: migrate -path ./database/migrations  -database "postgres://briankibet:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/fisa?sslmode=disable" -verbose up
 
     - name: Test
       run: make test
