@@ -15,7 +15,7 @@ jobs:
       postgres:
         image: postgres:14
         env:
-          POSTGRES_USER: root
+          POSTGRES_USER: briankibet
           POSTGRES_DB: fisa
           POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
         ports:
