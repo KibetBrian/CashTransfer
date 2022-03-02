@@ -25,7 +25,7 @@ func CreateAccount(c *gin.Context) {
 	res := db.Where("id=?",Account.HolderId ).First(&user)
 	if res.RowsAffected < 1 {
 		c.JSON(404, gin.H{"Message": "No such user", "User":user})
-		return
+		return 
 	}
 
 	db.AutoMigrate(&models.Account{})

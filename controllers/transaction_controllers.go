@@ -1,9 +1,12 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/KibetBrian/fisa/configs"
 	"github.com/KibetBrian/fisa/models"
 	"github.com/KibetBrian/fisa/services"
+	"github.com/KibetBrian/fisa/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/satori/go.uuid"
 )
@@ -21,6 +24,7 @@ func findAccountId(email string) (uuid.UUID, bool) {
 	}
 	return user.AccountId, true
 }
+
 
 //Adds amount to the account
 func Deposit(c *gin.Context) {
@@ -47,7 +51,13 @@ func Deposit(c *gin.Context) {
 //Transfer amount to another account
 func Send (c *gin.Context){
 	var TransactionReq models.TransactionRequest
-	c.ShouldBindJSON(&TransactionReq);
+	
+	err := c.ShouldBindJSON(&TransactionReq);
+	if err != nil{
+		c.JSON(http.StatusBadRequest, err)
+	}
+
+	var User models.User
 
 	receiverAccountId, isValid := findAccountId(TransactionReq.ReceiverEmail)
 	if !isValid{
@@ -60,12 +70,24 @@ func Send (c *gin.Context){
 		c.JSON(403, gin.H{"Message":"Check credential and try again"})
 		return
 	}
+	res := configs.Db.Where("email?", TransactionReq.SenderEmail).First(&User)
+	if res.RowsAffected < 1{
+		c.JSON(404, gin.H{"Message": "Check the credentials and try again"})
+		return
+	}	
+
+	isPasswordValid:= utils.CompareHash(TransactionReq.SenderPassword, User.Password)
+	if !isPasswordValid{
+		c.JSON(403, gin.H{"Message": "Check the credentials and try again"})
+		return
+	}	
 
 	if receiverAccountId == senderAccountId{
 		c.JSON(403, gin.H{"Message": "You cannot send money to yourself"})
 		return
 	}
-	//If the credentials are correct	, send the account ids' to services package for processing
+
+	//If the credentials are correct, send the account ids' to services package for processing
 	transaction, message, successful:=services.DoubleEntry(senderAccountId, receiverAccountId,TransactionReq.Amount);
 	if !successful{
 		c.JSON(403, message);

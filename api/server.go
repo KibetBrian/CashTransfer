@@ -16,7 +16,7 @@ func NewServer() *Server {
 	TransactionRoutes(router)
 	UserRoutes(router)
 	server.Router = router
-	
+
 	return server
 }
 

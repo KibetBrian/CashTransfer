@@ -7,19 +7,19 @@ import (
 	"time"
 )
 
-type AccountReq struct{
-	AccountId uuid.UUID `json:"accountId"`
+type AccountReq struct {
+	AccountId uuid.UUID `json:"accountId" binding:"required"`
 }
 
 type User struct {
 	gorm.Model
-	Id        uuid.UUID `json:"userId" gorm:"primaryKey; not null;"`
-	Name      string    `json:"userName" gorm:"not null;" binding:"required"`
-	Email     string    `json:"userEmail" gorm:"unique; not null" binding:"required" `
-	Password  string    `json:"password" gorm:"not null;" binding:"Required"`
+	Id        uuid.UUID `json:"id" gorm:"primaryKey; not null;"`
+	Name      string    `json:"name" gorm:"not null;" binding:"required"`
+	Email     string    `json:"email" gorm:"unique; not null" binding:"required" `
+	Password  string    `json:"password" gorm:"not null;" binding:"required"`
 	CreatedAt time.Time `json:"createdAt" sql:"type:timestamp" gorm:"default:CURRENT_TIMESTAMP"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"default:CURRENT_TIMESTAMP"`
-	AccountId uuid.UUID `json:"AccountId"`
+	AccountId uuid.UUID `json:"accountId"`
 }
 
 type Transaction struct {
@@ -43,8 +43,9 @@ type Account struct {
 }
 
 type TransactionRequest struct {
-	SenderEmail   string          `json:"senderEmail"`
-	ReceiverEmail string          `json:"receiverEmail"`
-	Amount        decimal.Decimal `json:"amount"`
-	Message       string          `json:"message"`
+	SenderEmail    string          `json:"senderEmail"`
+	SenderPassword string          `json:"senderPassword"`
+	ReceiverEmail  string          `json:"receiverEmail"`
+	Amount         decimal.Decimal `json:"amount" binding:"required,gt=0"`
+	Message        string          `json:"message"`
 }

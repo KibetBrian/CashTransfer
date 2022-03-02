@@ -17,10 +17,16 @@ func SayHello(c *gin.Context) {
 
 //Gets user input, validates and adds to the database
 func RegisterUser(c *gin.Context) {
-
 	var user models.User
-	c.ShouldBindJSON(&user)
+
+	err := c.ShouldBindJSON(&user)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, utils.ErrResponse(err))
+		return
+	}
+
 	user.Id = uuid.NewV4()
+
 	db, err := configs.ConnectDb()
 	if err != nil {
 		fmt.Print("Error Connecting to the database")
