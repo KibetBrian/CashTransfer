@@ -1,4 +1,4 @@
-package routes
+package api
 
 import (
 	"github.com/KibetBrian/fisa/controllers"

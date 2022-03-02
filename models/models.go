@@ -14,9 +14,9 @@ type AccountReq struct{
 type User struct {
 	gorm.Model
 	Id        uuid.UUID `json:"userId" gorm:"primaryKey; not null;"`
-	Name      string    `json:"userName" gorm:"not null;"`
-	Email     string    `json:"userEmail" gorm:"unique; not null" `
-	Password  string    `json:"password" gorm:"not null;"`
+	Name      string    `json:"userName" gorm:"not null;" binding:"required"`
+	Email     string    `json:"userEmail" gorm:"unique; not null" binding:"required" `
+	Password  string    `json:"password" gorm:"not null;" binding:"Required"`
 	CreatedAt time.Time `json:"createdAt" sql:"type:timestamp" gorm:"default:CURRENT_TIMESTAMP"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"default:CURRENT_TIMESTAMP"`
 	AccountId uuid.UUID `json:"AccountId"`

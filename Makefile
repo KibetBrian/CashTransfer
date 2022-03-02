@@ -43,3 +43,6 @@ ps:
 #Test 
 test:
 	go test -v -cover ./... -count=1
+#Run 
+run:
+	go run main.go
