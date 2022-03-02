@@ -2,9 +2,11 @@ package utils
 
 import (
 	"math/rand"
+	"net/mail"
 	"strings"
 	"time"
-	"net/mail"
+
+	"github.com/gin-gonic/gin"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -98,4 +100,8 @@ func GenerateRandomEmail () string{
 	return sb.String()
 }
 
+//Takes error as an input and return gin.H object
+func ErrResponse (err error) gin.H {
+	return gin.H{"Error":err.Error()}
+}
 

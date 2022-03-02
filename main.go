@@ -10,7 +10,12 @@ import (
 
 func main() {
 
-	api.RegisterRoutes()
+	server := api.NewServer()
+	err := server.Serve()
+	if err != nil {
+		log.Fatal("Failed to start the server...Err: ", err)
+	}
+
 	db, err := configs.ConnectDb()
 	if err != nil {
 		log.Fatal("Database connection failed. Err: ", err)

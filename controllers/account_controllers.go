@@ -14,8 +14,7 @@ func CreateAccount(c *gin.Context) {
 	var Account models.Account
 	var user models.User
 	c.ShouldBindJSON(&Account)
-	id := uuid.NewV4()
-	Account.Id = id
+	Account.Id =uuid.NewV4()
 	Account.Password, _ = utils.HashPassword(Account.Password)
 	db, err := configs.ConnectDb()
 	if err != nil {
