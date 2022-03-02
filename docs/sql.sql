@@ -1,3 +1,7 @@
+CREATE TYPE "Currency" AS ENUM (
+  'USD'
+);
+
 CREATE TABLE "users" (
   "id" uuid UNIQUE NOT NULL,
   "name" varchar NOT NULL,
@@ -15,7 +19,7 @@ CREATE TABLE "accounts" (
 );
 
 CREATE TABLE "transactions" (
-  "transactionId" uuid NOT NULL,
+  "Id" uuid NOT NULL,
   "sender" uuid NOT NULL,
   "reciever" uuid NOT NULL,
   "amount" decimal NOT NULL,
@@ -30,10 +34,10 @@ ALTER TABLE "transactions" ADD FOREIGN KEY ("reciever") REFERENCES "accounts" ("
 
 CREATE INDEX ON "users" ("id");
 
-CREATE INDEX ON "accounts" ("holderId");
+CREATE UNIQUE INDEX ON "accounts" ("holderId");
 
 CREATE INDEX ON "transactions" ("sender");
 
 CREATE INDEX ON "transactions" ("reciever");
 
-CREATE INDEX ON "transactions" ("transactionId");
+CREATE INDEX ON "transactions" ("Id");
