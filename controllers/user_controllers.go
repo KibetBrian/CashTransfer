@@ -1,14 +1,13 @@
 package controllers
 
 import (
-	"fmt"
+	"net/http"
+
 	"github.com/KibetBrian/fisa/configs"
 	"github.com/KibetBrian/fisa/models"
+	"github.com/KibetBrian/fisa/services"
 	"github.com/KibetBrian/fisa/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/satori/go.uuid"
-	"net/http"
-	"time"
 )
 
 func SayHello(c *gin.Context) {
@@ -24,36 +23,30 @@ func RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, utils.ErrResponse(err))
 		return
 	}
-
-	user.Id = uuid.NewV4()
-
-	db, err := configs.ConnectDb()
-	if err != nil {
-		fmt.Print("Error Connecting to the database")
-	}
 	isValid := utils.ValidateEmail(user.Email)
 	if !isValid {
-		c.JSON(400, "Invalid email")
-		return
-	}
-	//Check if email already exists
-	res := db.Where("user_email= ?", user.Email).First(&user)
-	if res.RowsAffected > 0 {
-		c.JSON(409, gin.H{"Message": res.Error})
+		c.JSON(http.StatusBadRequest, gin.H{"Error": "Invalid email"})
 		return
 	}
 	user.Password, _ = utils.HashPassword(user.Password)
 
-	//Insert user into db
-	db.AutoMigrate(&models.User{})
-	user.CreatedAt = time.Now()
-	result := db.Create(&user)
-	if result.Error != nil {
-		c.JSON(500, gin.H{"Error": result.Error})
+	//Check if the user is already registered
+	db, err := configs.ConnectDb()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Message":"Error occurred, try again"})
 		return
 	}
-
-	c.JSON(200, gin.H{"Message": "User Registered", "User": user})
+	res := db.Where("user_email= ?", user.Email).First(&user)
+	if res.RowsAffected > 0 {
+		c.JSON(http.StatusForbidden, gin.H{"Message":"Email already registered"})
+		return
+	}
+	registeredUser, err := services.RegisterUser(&user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Message":err})
+		return
+	}
+	c.JSON(200, gin.H{"Message": "User Registered", "User": registeredUser})
 }
 
 func Login(c *gin.Context) {
