@@ -19,7 +19,7 @@ type User struct {
 	Password  string    `json:"password" gorm:"not null;" binding:"required"`
 	CreatedAt time.Time `json:"createdAt" sql:"type:timestamp" gorm:"default:CURRENT_TIMESTAMP"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"default:CURRENT_TIMESTAMP"`
-	AccountId uuid.UUID `json:"accountId"`
+	AccountId uuid.UUID `json:"accountId" gorm:"unique; not null"`
 }
 
 type Transaction struct {
