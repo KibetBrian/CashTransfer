@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/KibetBrian/fisa/configs"
@@ -55,13 +56,19 @@ func Send (c *gin.Context){
 	err := c.ShouldBindJSON(&TransactionReq);
 	if err != nil{
 		c.JSON(http.StatusBadRequest, err)
+		return
 	}
-
+	db, err := configs.ConnectDb()
+	if err != nil{
+		log.Fatal("Database connection error",err)
+		c.JSON(http.StatusInternalServerError,"Try again later")
+		return
+	}
 	var User models.User
 
 	receiverAccountId, isValid := findAccountId(TransactionReq.ReceiverEmail)
 	if !isValid{
-		c.JSON(404, gin.H{"Message":"It seems we don't have a user with that email", "Email":TransactionReq.ReceiverEmail})
+		c.JSON(404, gin.H{"Message":"It seems we don't have a user with that email", "Email":TransactionReq.ReceiverEmail, "TransactionReq":TransactionReq})
 		return
 	}
 
@@ -70,7 +77,7 @@ func Send (c *gin.Context){
 		c.JSON(403, gin.H{"Message":"Check credential and try again"})
 		return
 	}
-	res := configs.Db.Where("email?", TransactionReq.SenderEmail).First(&User)
+	res := db.Where("email=?", TransactionReq.SenderEmail).First(&User)
 	if res.RowsAffected < 1{
 		c.JSON(404, gin.H{"Message": "Check the credentials and try again"})
 		return

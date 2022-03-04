@@ -36,9 +36,9 @@ func RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"Message":"Error occurred, try again"})
 		return
 	}
-	res := db.Where("user_email= ?", user.Email).First(&user)
+	res := db.Where("email= ?", user.Email).First(&user)
 	if res.RowsAffected > 0 {
-		c.JSON(http.StatusForbidden, gin.H{"Message":"Email already registered"})
+		c.JSON(http.StatusForbidden, gin.H{"Message":"Email already registered", "Rows Affected": db.RowsAffected})
 		return
 	}
 	registeredUser, err := services.RegisterUser(&user)

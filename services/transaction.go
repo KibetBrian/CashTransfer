@@ -19,10 +19,12 @@ func Debit(senderAccountId uuid.UUID, amount decimal.Decimal, db *gorm.DB, tx *g
 
 	res := account.Balance.Sub(amount)
 	if res.LessThan(zero) {
-		return "Insufficient funds", account.Balance, false
+		tx.Rollback()
+		return "Insufficient funds", account.Balance, false 
 	}
 
-	if amount.LessThan(zero) {
+	if amount.LessThanOrEqual(zero) {
+		tx.Rollback()
 		return "The amount to be sent is less than threshhold", account.Balance, false
 	}
 
