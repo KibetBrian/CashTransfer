@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func init(){
@@ -16,21 +15,6 @@ func init(){
 //Check user email input validity
 func ValidateEmail(address string) bool {
 	_, err := mail.ParseAddress(address)
-	return err == nil
-}
-
-//Hash user plain text password
-func HashPassword(plainText string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(plainText), 10)
-	if err != nil {
-		return "", err
-	}
-	return string(bytes), nil
-}
-
-//Function to compare hashed password
-func CompareHash(plainTextPassword, hash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(plainTextPassword))
 	return err == nil
 }
 

@@ -83,7 +83,7 @@ func Send (c *gin.Context){
 		return
 	}	
 
-	isPasswordValid:= utils.CompareHash(TransactionReq.SenderPassword, User.Password)
+	isPasswordValid:= utils.CompareHashAndPassword(TransactionReq.SenderPassword, User.Password)
 	if !isPasswordValid{
 		c.JSON(403, gin.H{"Message": "Check the credentials and try again"})
 		return

@@ -68,7 +68,7 @@ func Login(c *gin.Context) {
 		c.JSON(404, "Email not found")
 		return
 	}
-	isValid := utils.CompareHash(plainText, user.Password)
+	isValid := utils.CompareHashAndPassword(plainText, user.Password)
 	if !isValid {
 		c.JSON(403, "Invalid password")
 		return
