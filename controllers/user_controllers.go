@@ -23,7 +23,7 @@ func RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, utils.ErrResponse(err))
 		return
 	}
-	isValid := utils.ValidateEmail(user.Email)
+	isValid := utils.CheckValidity(user.Email)
 	if !isValid {
 		c.JSON(http.StatusBadRequest, gin.H{"Error": "Invalid email"})
 		return
@@ -57,7 +57,7 @@ func Login(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	if err := utils.ValidateEmail(user.Email); !err {
+	if err := utils.CheckValidity(user.Email); !err {
 		c.JSON(403, "Invalid email")
 		return
 	}
@@ -68,7 +68,7 @@ func Login(c *gin.Context) {
 		c.JSON(404, "Email not found")
 		return
 	}
-	isValid := utils.CompareHashAndPassword(plainText, user.Password)
+	isValid := utils.CompareHashAndPassword(user.Password, plainText)
 	if !isValid {
 		c.JSON(403, "Invalid password")
 		return

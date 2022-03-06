@@ -16,7 +16,7 @@ type User struct {
 	Id        uuid.UUID `json:"id" gorm:"primaryKey; not null;"`
 	Name      string    `json:"name" gorm:"not null;" binding:"required"`
 	Email     string    `json:"email" gorm:"unique; not null" binding:"required" `
-	Password  string    `json:"password" gorm:"not null;" binding:"required"`
+	Password  string    `json:"password" gorm:"not null;" binding:"required, min=6"`
 	CreatedAt time.Time `json:"createdAt" sql:"type:timestamp" gorm:"default:CURRENT_TIMESTAMP"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"default:CURRENT_TIMESTAMP"`
 	AccountId uuid.UUID `json:"accountId" gorm:"unique; not null"`

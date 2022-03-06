@@ -25,7 +25,7 @@ func TestRegisterUser(t *testing.T){
 		log.Fatal("Failed to connect to the database")
 	}
 
-	isValid := utils.ValidateEmail(testUser.Email)
+	isValid := utils.CheckValidity(testUser.Email)
 	res :=db.Create(&testUser)
 	require.True(t, isValid)
 	require.NoError(t, res.Error)	

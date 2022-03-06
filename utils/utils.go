@@ -12,8 +12,9 @@ import (
 func init(){
 	rand.Seed(time.Now().UnixNano())
 }
-//Check user email input validity
-func ValidateEmail(address string) bool {
+
+//Takes email address as an input and checks if it is valid
+func CheckValidity(address string) bool {
 	_, err := mail.ParseAddress(address)
 	return err == nil
 }
