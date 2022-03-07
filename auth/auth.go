@@ -10,7 +10,7 @@ import (
 
 const keyName = "JWT_SECRET_KEY"
 
-func NewToken(username string, duration time.Duration) (string, error) {
+func GenerateToken(username string, duration time.Duration) (string, error) {
 	secretKey , err := GetEnvSecretKey()
 	if err!= nil{
 		return "", fmt.Errorf("env load failed")
@@ -22,7 +22,7 @@ func NewToken(username string, duration time.Duration) (string, error) {
 	if err!= nil{
 		return "", fmt.Errorf("token creation failed. Err: %v",err)
 	}
-	
+
 	return token, nil
 }
 
