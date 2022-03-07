@@ -49,3 +49,13 @@ type TransactionRequest struct {
 	Amount         decimal.Decimal `json:"amount" binding:"required,gt=0"`
 	Message        string          `json:"message"`
 }
+
+type LoginRequest struct{
+	Email string 	`json:"email"`
+	Password string  `json:"password"`
+}
+
+type LoginResponse struct{
+	AccessToken string `json:"accessToken"`
+	User  User `json:"userData"`
+}

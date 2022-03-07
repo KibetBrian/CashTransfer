@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 
+	"github.com/KibetBrian/fisa/auth"
 	"github.com/KibetBrian/fisa/configs"
 	"github.com/KibetBrian/fisa/models"
 	"github.com/KibetBrian/fisa/services"
@@ -50,28 +52,54 @@ func RegisterUser(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
+	var req models.LoginRequest
 	var user models.User
-	c.ShouldBindJSON(&user)
+	if err := c.ShouldBindJSON(&req); err!=nil{
+		c.JSON(http.StatusBadRequest, err)
+	}
 
 	db, err := configs.ConnectDb()
 	if err != nil {
 		return
 	}
-	if err := utils.CheckValidity(user.Email); !err {
-		c.JSON(403, "Invalid email")
+	if err := utils.CheckValidity(req.Email); !err {
+		c.JSON(http.StatusUnauthorized, "Invalid email")
 		return
 	}
 
-	plainText := user.Password
-	res := db.Where("user_email= ?", user.Email).First(&user)
+	plainText := req.Password
+	res := db.Where("user_email= ?", req.Email).First(&user)
 	if res.RowsAffected < 1 {
 		c.JSON(404, "Email not found")
 		return
 	}
-	isValid := utils.CompareHashAndPassword(user.Password, plainText)
+
+	
+	isValid := utils.CompareHashAndPassword(req.Password, plainText)
 	if !isValid {
-		c.JSON(403, "Invalid password")
+		c.JSON(http.StatusUnauthorized, "Invalid password")
 		return
 	}
-	c.JSON(200, "Login Successful")
+
+	token, err := auth.GenerateToken(user.Name, time.Minute*15)
+	if err !=nil{
+		c.JSON(http.StatusInternalServerError, gin.H{"Message":"Error occurred"})
+		return
+	}
+
+	newModel := &models.User{
+		Name: user.Name,
+		Email: user.Email,
+		CreatedAt: user.CreatedAt,
+		AccountId: user.AccountId,
+		UpdatedAt: user.UpdatedAt,
+	}
+	
+	userRes := &models.LoginResponse{
+		AccessToken: token,
+		User: *newModel,
+	}
+	
+	
+	c.JSON(200, userRes)
 }
