@@ -2,11 +2,11 @@ package api
 
 import(
 	"github.com/gin-gonic/gin"
-	"github.com/KibetBrian/fisa/controllers"
+	"github.com/KibetBrian/fisa/handlers"
 )
 
 var AcccountRoutes = func(router *gin.Engine) {
-	router.POST("/account/create", controllers.CreateAccount)
-	router.GET("/account/delete", controllers.DeleteAccount)
-	router.GET("/account/account", controllers.GetAccount)
+	router.POST("/account/create", handlers.CreateAccount)
+	router.GET("/account/delete", handlers.DeleteAccount)
+	router.GET("/account/account", handlers.GetAccount)
 }
