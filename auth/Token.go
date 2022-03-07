@@ -33,3 +33,4 @@ func GetEnvSecretKey() (string, error) {
 	}
 	return os.Getenv(keyName), nil
 }
+
