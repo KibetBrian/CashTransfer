@@ -67,15 +67,13 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	plainText := req.Password
-	res := db.Where("user_email= ?", req.Email).First(&user)
+	res := db.Where("email= ?", req.Email).First(&user)
 	if res.RowsAffected < 1 {
 		c.JSON(404, "Email not found")
 		return
 	}
 
-	
-	isValid := utils.CompareHashAndPassword(req.Password, plainText)
+	isValid := utils.CompareHashAndPassword(user.Password, req.Password)
 	if !isValid {
 		c.JSON(http.StatusUnauthorized, "Invalid password")
 		return
