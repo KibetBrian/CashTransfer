@@ -29,7 +29,7 @@ func AuthMiddleware(maker Maker) gin.HandlerFunc{
 
 		authType := strings.ToLower(fields[0])
 		if authType != authorizationType{
-			err := errors.New("invalid header provided")
+			err := errors.New("invalid authorization type provided")
 			c.AbortWithStatusJSON(http.StatusBadRequest, err)
 		}
 
