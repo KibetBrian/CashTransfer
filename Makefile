@@ -1,6 +1,6 @@
 #Create database container
 cc:
-	docker run --name fisa-database -p 5432:5432 -e POSTGRES_USER=briankibet -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} -d postgres:14-alpine
+	docker run --name fisa-database --network fisa-infra -p 5432:5432 -e POSTGRES_USER=briankibet -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} -d postgres:14-alpine
 
 createdb:
 	docker exec -it fisa-database createdb --username=briankibet --owner=briankibet fisa
