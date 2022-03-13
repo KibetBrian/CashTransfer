@@ -8,7 +8,6 @@ import (
 )
 
 var TransactionRoutes = func(router *gin.Engine) {
-
 	router.POST("/transaction/deposit", handlers.Deposit)
 	router.POST("/transaction/send", auth.AuthMiddleware(NewMaker()), handlers.Send)
 }
