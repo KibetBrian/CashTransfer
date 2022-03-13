@@ -38,7 +38,6 @@ func AuthMiddleware(maker Maker) gin.HandlerFunc{
 		if err != nil{
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Error: ": err, "Message: ":"Invalid headers"})
 		}
-		
 		c.Set(tokenPayload, payload)
 		c.Next()
 	}

@@ -6,6 +6,7 @@ import (
 
 	"github.com/KibetBrian/fisa/auth"
 	"github.com/KibetBrian/fisa/configs"
+	"github.com/KibetBrian/fisa/database/redis"
 	"github.com/KibetBrian/fisa/models"
 	"github.com/KibetBrian/fisa/services"
 	"github.com/KibetBrian/fisa/utils"
@@ -35,17 +36,17 @@ func RegisterUser(c *gin.Context) {
 	//Check if the user is already registered
 	db, err := configs.ConnectDb()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"Message":"Error occurred, try again"})
+		c.JSON(http.StatusInternalServerError, gin.H{"Message": "Error occurred, try again"})
 		return
 	}
 	res := db.Where("email= ?", user.Email).First(&user)
 	if res.RowsAffected > 0 {
-		c.JSON(http.StatusForbidden, gin.H{"Message":"Email already registered", "Rows Affected": db.RowsAffected})
+		c.JSON(http.StatusForbidden, gin.H{"Message": "Email already registered", "Rows Affected": db.RowsAffected})
 		return
 	}
 	registeredUser, err := services.RegisterUser(&user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"Message":err})
+		c.JSON(http.StatusInternalServerError, gin.H{"Message": err})
 		return
 	}
 	c.JSON(200, gin.H{"Message": "User Registered", "User": registeredUser})
@@ -54,7 +55,7 @@ func RegisterUser(c *gin.Context) {
 func Login(c *gin.Context) {
 	var req models.LoginRequest
 	var user models.User
-	if err := c.ShouldBindJSON(&req); err!=nil{
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 	}
 
@@ -80,24 +81,52 @@ func Login(c *gin.Context) {
 	}
 
 	token, err := auth.GenerateToken(user.Name, time.Minute*15)
-	if err !=nil{
-		c.JSON(http.StatusInternalServerError, gin.H{"Message":"Error occurred"})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Message": "Error occurred"})
 		return
 	}
 
 	newModel := &models.User{
-		Name: user.Name,
-		Email: user.Email,
+		Name:      user.Name,
+		Email:     user.Email,
 		CreatedAt: user.CreatedAt,
 		AccountId: user.AccountId,
 		UpdatedAt: user.UpdatedAt,
 	}
-	
+
+	RefreshToken, err := auth.GenerateToken(user.Name, time.Hour*24)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, "Refresh token generation err")
+	}
+
+	//Access token payload
+	atp, err := utils.GetPayload(token)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, "")
+	}
+
+	//Refresh token payload
+	rtp, err := utils.GetPayload(RefreshToken)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, "")
+	}
+
 	userRes := &models.LoginResponse{
-		AccessToken: token,
-		User: *newModel,
+		AccessToken:           token,
+		AccessTokenExpiresAt:  atp.ExpiresAt,
+		RefreshToken:          RefreshToken,
+		RefreshTokenExpiresAt: rtp.ExpiresAt,
+		User:                  *newModel,
+	}
+	//Set refresh token in redis
+	isSet, err := redis.SetRefreshToken(utils.UUIDString(rtp.TokenId), RefreshToken, time.Hour*24)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"Message: ": "Error setting refresh token", "Error: ": err})
+		return
+	}
+	if isSet {
+		c.JSON(200, userRes)
+		return
 	}
 	
-	
-	c.JSON(200, userRes)
 }

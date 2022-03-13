@@ -62,3 +62,7 @@ dcu:
 #Stop running containers
 dcd:
 	docker compose down
+
+#Run redis
+drr:
+	docker run --name redis -p 6379:6379 -d redis

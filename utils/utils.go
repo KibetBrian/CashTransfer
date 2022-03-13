@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	uuid "github.com/satori/go.uuid"
 )
 
 func init(){
@@ -99,6 +100,11 @@ func GetEnvVal(keyname string) (string, error) {
 		return "", err
 	}
 	return os.Getenv(keyname), nil
+}
+
+//Takes uuid as input and returns converted string of it
+func UUIDString(u uuid.UUID) string{
+	return u.String()
 }
 
 

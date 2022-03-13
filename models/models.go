@@ -57,5 +57,20 @@ type LoginRequest struct{
 
 type LoginResponse struct{
 	AccessToken string `json:"accessToken"`
+	AccessTokenExpiresAt time.Time `json:"accessTokenExpiresAt"`
+	RefreshToken string `json:"refreshToken"`
+	RefreshTokenExpiresAt time.Time `json:"refreshtTokenExpiresAt"`
 	User  User `json:"userData"`
+}
+
+type RefreshTokenReq struct{
+	RefreshToken string `json:"refreshToken"`
+}
+
+type RefreshTokenStored struct{
+	TokenId uuid.UUID `json:"tokenId"`
+	RefreshToken string `json:"refreshToken"`
+	RefreshTokenExpiresAt time.Time `json:"refreshtTokenExpiresAt"`
+	ClientIp string `json:"clientIp"`
+	UserAgent string `json:"userAgent"`
 }

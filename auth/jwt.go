@@ -56,7 +56,7 @@ func NewMaker(secretKey string)(Maker, error){
 
 //Create new jwt token
 func (m *JwtMaker) CreateToken(username string, duration time.Duration)(string, error){
-	payload := NewPayload(username,duration)
+	payload := NewPayload(username, duration)
 	jwtToken  := jwt.NewWithClaims(jwt.SigningMethodHS256, payload)
 	
 	return jwtToken.SignedString([]byte(m.secretKey))
@@ -74,7 +74,7 @@ func (m *JwtMaker) VerifyToken(token string)(*Payload, error){
 
 	jwtToken , err := jwt.ParseWithClaims(token, &Payload{}, KeyFunc)
 	if err!=nil{
-		return nil, fmt.Errorf("invalid token")
+		return nil, fmt.Errorf("invalid token error: %v", err)
 	}
 
 	payload, ok := jwtToken.Claims.(*Payload)
