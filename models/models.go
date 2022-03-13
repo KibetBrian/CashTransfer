@@ -74,3 +74,10 @@ type RefreshTokenStored struct{
 	ClientIp string `json:"clientIp"`
 	UserAgent string `json:"userAgent"`
 }
+
+type RefreshTokenResponse struct{
+	AccessToken string `json:"accessToken"`
+	AccessTokenExpiresAt time.Time `json:"accessTokenExpiresAt"`
+	RefreshToken string `json:"refreshToken"`
+	RefreshTokenExpiresAt time.Time `json:"refreshtTokenExpiresAt"`
+}
