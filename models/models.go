@@ -67,17 +67,15 @@ type RefreshTokenReq struct{
 	RefreshToken string `json:"refreshToken"`
 }
 
-type RefreshTokenStored struct{
-	TokenId uuid.UUID `json:"tokenId"`
-	RefreshToken string `json:"refreshToken"`
-	RefreshTokenExpiresAt time.Time `json:"refreshtTokenExpiresAt"`
-	ClientIp string `json:"clientIp"`
-	UserAgent string `json:"userAgent"`
-}
 
 type RefreshTokenResponse struct{
 	AccessToken string `json:"accessToken"`
 	AccessTokenExpiresAt time.Time `json:"accessTokenExpiresAt"`
 	RefreshToken string `json:"refreshToken"`
 	RefreshTokenExpiresAt time.Time `json:"refreshtTokenExpiresAt"`
+}
+
+type CheckBalanceReq struct{
+	Email     string    `json:"email"`
+	Password     string          `json:"password"`
 }

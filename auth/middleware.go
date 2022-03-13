@@ -36,7 +36,7 @@ func AuthMiddleware(maker Maker) gin.HandlerFunc{
 		accessToken := fields[1]
 		payload, err := maker.VerifyToken(accessToken)
 		if err != nil{
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Error: ": err, "Message: ":"Invalid headers"})
+			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Error: ": err, "Message: ":"Invalid token"})
 		}
 		c.Set(tokenPayload, payload)
 		c.Next()
