@@ -3,10 +3,12 @@ package utils
 import (
 	"math/rand"
 	"net/mail"
+	"os"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func init(){
@@ -89,4 +91,14 @@ func GenerateRandomEmail () string{
 func ErrResponse (err error) gin.H {
 	return gin.H{"Error":err.Error()}
 }
+
+//Get env value
+func GetEnvVal(keyname string) (string, error) {
+	err := godotenv.Load()
+	if err != nil{
+		return "", err
+	}
+	return os.Getenv(keyname), nil
+}
+
 

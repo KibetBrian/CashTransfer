@@ -1,9 +1,17 @@
 #Create database container
-cc:
-	docker run --name fisa-database --network fisa-infra -p 5432:5432 -e POSTGRES_USER=briankibet -e POSTGRES_PASSWORD=${POSTGRES_PASSWORD} -d postgres:14-alpine
-
+cpc:
+	docker run --name fisa-database --network fisa-infra -p 5432:5432 -e POSTGRES_USER=briankibet -e POSTGRES_PASSWORD=briankibet -d postgres:14-alpine
+#Create working database
 createdb:
 	docker exec -it fisa-database createdb --username=briankibet --owner=briankibet fisa
+
+#Build app image
+bai:
+	docker build -t fisa-app:1.0 .
+
+#Create app container
+rac:
+	docker run --name fisa-app --network fisa-infra -p 8080:8080 
 
 dropdb:
 	docker exec -it fisa-database dropdb --username=briankibet fisa
@@ -45,4 +53,12 @@ test:
 	go test -v -cover ./... -count=1
 #Run 
 run:
-	go run main.go
+	go run main.go 
+#Spin docker containers
+
+dcu:
+	docker compose up
+
+#Stop running containers
+dcd:
+	docker compose down
