@@ -1,13 +1,13 @@
 #Builds binary file
 FROM  golang:1.17.8-alpine AS builder
 WORKDIR /app
-COPY . /app/
+COPY . .
 RUN go build -o main main.go
 
-#Copy binary file from builder stage
-FROM golang:1.17.8-alpine3.15
+#Runs the binary file from the builder stage
+FROM alpine:3.16.0
 WORKDIR /app
-COPY --from=builder /app/main .
+COPY --from=builder /app/main /app/
 
 EXPOSE 8080
 CMD ["/app/main"]

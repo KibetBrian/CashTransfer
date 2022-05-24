@@ -26,7 +26,7 @@ func CreateAccount(c *gin.Context) {
 
 	res := db.Where("id=?", Account.HolderId).First(&user)
 	if res.RowsAffected < 1 {
-		c.JSON(404, gin.H{"Message": "No such user", "User": user})
+		c.JSON(404, gin.H{"Message": "No such user, you need to register your email", "User": user})
 		return
 	}
 

@@ -28,9 +28,9 @@ func checkError (err error) bool{
 }
 
 func GetEnvValue (key string) string {
-	err := godotenv.Load();
+	err := godotenv.Load()
 	if err != nil {
-		log.Fatal (err)
+		log.Fatalf ("Env load failed, %v \n",err)
 	}
 	return os.Getenv(key);
 }
@@ -43,7 +43,7 @@ func ConnectDb () (*gorm.DB, error){
 		log.Fatal("Error converting string port to int")
 	}
 	
-	//Postres Connection details
+	//Postgres Connection details
 	psqlInfo :=  fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",host,port,user,password,database)
 	db, err := gorm.Open(postgres.Open(psqlInfo), &gorm.Config{})
 	
