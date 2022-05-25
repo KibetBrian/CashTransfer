@@ -4,6 +4,7 @@ import (
 	"math/rand"
 	"net/mail"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -94,12 +95,12 @@ func ErrResponse (err error) gin.H {
 }
 
 //Get env value
-func GetEnvVal(keyname string) (string, error) {
-	err := godotenv.Load()
+func GetEnvVal(key string) (string, error) {
+	err := godotenv.Load(filepath.Join("./", ".env"))
 	if err != nil{
 		return "", err
 	}
-	return os.Getenv(keyname), nil
+	return os.Getenv(key), nil
 }
 
 //Takes uuid as input and returns converted string of it

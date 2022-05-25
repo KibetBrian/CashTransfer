@@ -3,20 +3,20 @@ package configs
 import (
 	"fmt"
 	"log"
-	"os"
 	"strconv"
+
 	"github.com/KibetBrian/fisa/models"
-	"github.com/joho/godotenv"
+	"github.com/KibetBrian/fisa/utils"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 var (
-	host = GetEnvValue("DB_HOST")
-	port = GetEnvValue("DB_PORT")
-	user  = GetEnvValue("DB_USER")
-	password = GetEnvValue("DB_PASSWORD")
-	database = GetEnvValue("DB_DATABASE")
+	host, _ = utils.GetEnvVal("DB_HOST")
+	port, _ = utils.GetEnvVal("DB_PORT")
+	user, _  = utils.GetEnvVal("DB_USER")
+	password, _ = utils.GetEnvVal("DB_PASSWORD")
+	database, _ = utils.GetEnvVal("DB_DATABASE")
     Db *gorm.DB
 )
 
@@ -27,13 +27,6 @@ func checkError (err error) bool{
 	return false
 }
 
-func GetEnvValue (key string) string {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf ("Env load failed, %v \n",err)
-	}
-	return os.Getenv(key);
-}
 
 func ConnectDb () (*gorm.DB, error){
 
