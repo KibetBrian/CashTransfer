@@ -1,2 +1,4 @@
 .vscode
-/app.env
+/env.env
+env.env
+.env

@@ -95,7 +95,7 @@ func ErrResponse (err error) gin.H {
 
 //Get env value
 func GetEnvVal(key string) (string, error) {
-	err := godotenv.Load("app.env")
+	err := godotenv.Load("env.env")
 	if err != nil{
 		return "", err
 	}
