@@ -4,7 +4,6 @@ import (
 	"math/rand"
 	"net/mail"
 	"os"
-	"path/filepath"
 	"strings"
 	"time"
 
@@ -96,7 +95,7 @@ func ErrResponse (err error) gin.H {
 
 //Get env value
 func GetEnvVal(key string) (string, error) {
-	err := godotenv.Load(filepath.Join("./", ".env"))
+	err := godotenv.Load("app.env")
 	if err != nil{
 		return "", err
 	}
