@@ -42,7 +42,6 @@ require (
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/jackc/pgx/v4 v4.14.1 // indirect
-	github.com/joho/godotenv v1.4.0
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/lib/pq v1.10.4
