@@ -19,7 +19,7 @@ git clone https://github.com/KibetBrian/PeerToPeer-Money-Transfer
 ### Install dependencies
 
 ```
-go mod download
+cd PeerToPeer-Money-Transfer && go mod download
 
 ```
 
