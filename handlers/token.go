@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/KibetBrian/fisa/auth"
@@ -26,8 +27,8 @@ func RefreshToken(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"Message ": "Token not found", "Token: ": s})
 	}
 
-	sk, err := utils.GetEnvVal("JWT_SECRET_KEY")
-	if err != nil {
+	sk, isFound:=os.LookupEnv("JWT_SECRET_KEY")
+	if !isFound {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, "Error")
 	}
 
