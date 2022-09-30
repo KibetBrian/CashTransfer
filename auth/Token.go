@@ -11,9 +11,9 @@ import (
 const keyName = "JWT_SECRET_KEY"
 
 func GenerateToken(username string, duration time.Duration) (string, error) {
-	secretKey , err := GetEnvSecretKey()
-	if err!= nil{
-		return "", fmt.Errorf("env load failed")
+	secretKey, isFound := os.LookupEnv(keyName)
+	if !isFound {
+		return "", fmt.Errorf("Environment variable not found. Key: %s", keyName)
 	}
 
 	maker := JwtMaker{secretKey}
@@ -26,12 +26,4 @@ func GenerateToken(username string, duration time.Duration) (string, error) {
 	return token, nil
 }
 
-func GetEnvSecretKey() (string, error) {
-	err := godotenv.Load()
-	if err != nil{
-		return "", err
-	}
-	
-	return os.Getenv(keyName), nil
-}
 
