@@ -10,13 +10,12 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	uuid "github.com/satori/go.uuid"
 )
 
 func init(){
 	rand.Seed(time.Now().UnixNano())
-	
+
 	err := SetUpEnvironmentVariable(".env.example")
 	if err != nil {
 		log.Fatal(err)
@@ -133,16 +132,6 @@ func GenerateRandomEmail () string{
 //Takes error as an input and return gin.H object
 func ErrResponse (err error) gin.H {
 	return gin.H{"Error":err.Error()}
-}
-
-//Get env value
-func GetEnvVal(key string) (string, error) {
-	err := godotenv.Load(".env.example")
-	if err != nil{
-		return "", err
-	}
-	
-	return os.Getenv(key), nil
 }
 
 //Takes uuid as input and returns converted string of it
