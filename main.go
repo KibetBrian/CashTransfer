@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-
 	server := api.NewServer()
+	
 	err := server.Serve()
 	if err != nil {
 		log.Fatal("Failed to start the server...Err: ", err)
@@ -20,6 +20,6 @@ func main() {
 	if err != nil {
 		log.Fatal("Database connection failed. Err: ", err)
 	}
-	db.AutoMigrate(&models.User{}, &models.Account{}, &models.Transaction{})
 
+	db.AutoMigrate(&models.User{}, &models.Account{}, &models.Transaction{})
 }

@@ -26,11 +26,13 @@ func RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, utils.ErrResponse(err))
 		return
 	}
+
 	isValid := utils.CheckValidity(user.Email)
 	if !isValid {
 		c.JSON(http.StatusBadRequest, gin.H{"Error": "Invalid email"})
 		return
 	}
+
 	user.Password, _ = utils.HashPassword(user.Password)
 
 	//Check if the user is already registered
@@ -39,22 +41,26 @@ func RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"Message": "Error occurred, try again"})
 		return
 	}
+
 	res := db.Where("email= ?", user.Email).First(&user)
 	if res.RowsAffected > 0 {
 		c.JSON(http.StatusForbidden, gin.H{"Message": "Email already registered", "Rows Affected": db.RowsAffected})
 		return
 	}
+
 	registeredUser, err := services.RegisterUser(&user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"Message": err})
 		return
 	}
+
 	c.JSON(200, gin.H{"Message": "User Registered", "User": registeredUser})
 }
 
 func Login(c *gin.Context) {
 	var req models.LoginRequest
 	var user models.User
+	
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 	}
@@ -63,6 +69,7 @@ func Login(c *gin.Context) {
 	if err != nil {
 		return
 	}
+
 	if err := utils.CheckValidity(req.Email); !err {
 		c.JSON(http.StatusUnauthorized, "Invalid email")
 		return
@@ -118,12 +125,14 @@ func Login(c *gin.Context) {
 		RefreshTokenExpiresAt: rtp.ExpiresAt,
 		User:                  *newModel,
 	}
+
 	//Set refresh token in redis
 	isSet, err := redis.SetRefreshToken(utils.UUIDString(rtp.TokenId), RefreshToken, time.Hour*24)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"Message: ": "Error setting refresh token", "Error: ": err})
 		return
 	}
+
 	if isSet {
 		c.JSON(200, userRes)
 		return

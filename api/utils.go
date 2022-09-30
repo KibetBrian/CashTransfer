@@ -13,10 +13,12 @@ func NewMaker() (auth.Maker) {
 		log.Fatal("Error occurred while retrieving env val. Err: ", err)
 		return nil
 	}
+
 	maker, err := auth.NewMaker(secretKey)
 	if err != nil {
 		log.Fatal("Error occurred while creating new make. Err ", err)
 		return nil
 	}
+	
 	return maker
 }

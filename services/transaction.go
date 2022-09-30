@@ -12,8 +12,8 @@ import (
 
 //Subtracts the amount from sender account
 func Debit(senderAccountId uuid.UUID, amount decimal.Decimal, db *gorm.DB, tx *gorm.DB) (string, decimal.Decimal, bool) {
-
 	var account models.Account
+
 	tx.Clauses(clause.Locking{Strength: "NO KEY UPDATE"}).Where("id=?", senderAccountId).First(&account)
 	zero := decimal.NewFromInt(0)
 
@@ -93,20 +93,25 @@ func DoubleEntry(senderAccountId uuid.UUID, receiverAccountId uuid.UUID, amount 
 //Takes account id as input and adds amount to it
 func Deposit(accountId uuid.UUID, amount decimal.Decimal) (string, bool) {
 	var account models.Account
+
 	db, err := configs.ConnectDb()
 	if err != nil {
 		panic(err)
 	}
+
 	db.Where("id=?", accountId).First(&account)
 	account.Balance = account.Balance.Add(amount)
 	db.Save(&account)
+
 	transaction := &models.Transaction{
 		Id:                     uuid.NewV4(),
 		Receiver:               accountId,
 		ReceiverAccountBalance: account.Balance,
 		Amount:                 amount,
 	}
+
 	saveTransaction(transaction)
+
 	return "Deposit Successful", true
 }
 
@@ -116,5 +121,6 @@ func saveTransaction(t *models.Transaction) {
 	if err != nil {
 		panic("Failed to connect to the database")
 	}
+	
 	db.Create(&t)
 }

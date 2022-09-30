@@ -66,9 +66,11 @@ func GenerateRandomPassword (min, max int64) string {
 	const characters ="`1234567890qwertyuiopasdfghjklzxcvbnm,./!@#$%^&*()-=_+?><ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	var sb strings.Builder
 	length := GenerateRandInt(min, max);
+
 	for i:=0; i<=int(length); i++{
 		sb.WriteByte(characters[GenerateRandInt(0,length)])
 	}
+
 	return sb.String()
 }
 
@@ -81,10 +83,12 @@ func GenerateRandomEmail () string{
 	name := GenerateRandString(int(GenerateRandInt(0,64)));
 	domain:=domains[rand.Intn(len(domains))]
 	provider := providers[rand.Intn(len(domains))]
+
 	sb.WriteString(name)
 	sb.WriteString(at)
 	sb.WriteString(provider)
 	sb.WriteString(domain)
+
 	return sb.String()
 }
 
@@ -99,6 +103,7 @@ func GetEnvVal(key string) (string, error) {
 	if err != nil{
 		return "", err
 	}
+	
 	return os.Getenv(key), nil
 }
 

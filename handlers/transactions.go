@@ -18,39 +18,42 @@ func Deposit(c *gin.Context) {
 	var TransactionReq models.TransactionRequest
 	var Transaction models.Transaction
 	id := uuid.NewV4()
+
 	c.ShouldBindJSON(&TransactionReq)
 	Transaction.Id = id
+
 	receiverAccountId, isValid := findAccountId(TransactionReq.ReceiverEmail)
 	if !isValid {
 		c.JSON(200, "Seems we don't have users with that email")
 		return
 	}
 	Transaction.Receiver = receiverAccountId
+
 	//Call services deposit func with credential and amount
 	message, isSuccessful := services.Deposit(receiverAccountId, TransactionReq.Amount)
 	if isSuccessful {
 		c.JSON(200, gin.H{"Message": message, "Transaction": TransactionReq})
 		return
 	}
-
 }
 
 //Transfer amount to another account
 func Send (c *gin.Context){
 	var TransactionReq models.TransactionRequest
+	var User models.User
 	
 	err := c.ShouldBindJSON(&TransactionReq);
 	if err != nil{
 		c.JSON(http.StatusBadRequest, err)
 		return
 	}
+
 	db, err := configs.ConnectDb()
 	if err != nil{
 		log.Fatal("Database connection error",err)
 		c.JSON(http.StatusInternalServerError,"Try again later")
 		return
 	}
-	var User models.User
 
 	receiverAccountId, isValid := findAccountId(TransactionReq.ReceiverEmail)
 	if !isValid{
@@ -63,6 +66,7 @@ func Send (c *gin.Context){
 		c.JSON(403, gin.H{"Message":"Check credential and try again"})
 		return
 	}
+	
 	res := db.Where("email=?", TransactionReq.SenderEmail).First(&User)
 	if res.RowsAffected < 1{
 		c.JSON(404, gin.H{"Message": "Check the credentials and try again"})

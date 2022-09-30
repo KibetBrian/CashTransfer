@@ -12,6 +12,7 @@ func HashPassword(p string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("password hashing failed")
 	}
+	
 	return string(bytes), nil
 }
 

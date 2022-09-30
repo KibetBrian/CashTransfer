@@ -14,14 +14,17 @@ import (
 //Takes account id as input and return account object from the database
 func GetAccount(id uuid.UUID) (*models.Account, bool) {
 	var account models.Account
+
 	db, err := configs.ConnectDb()
 	if err != nil {
 		log.Fatal("Database connection error: ", err)
 	}
+
 	res := db.Where("id=?", id).First(&account)
 	if res.RowsAffected < 1 {
 		return nil, false
 	}
+	
 	return &account, true
 }
 
@@ -33,9 +36,11 @@ func CreateAccount(userId uuid.UUID, tx *gorm.DB) (uuid.UUID, error) {
 	account.Password, _ = utils.HashPassword(account.Password)
 	account.HolderId = userId
 	account.Balance=decimal.NewFromInt(0)
+
 	res := tx.Create(&account)
 	if res.Error != nil {
 		return uuid.Nil, res.Error
 	}
+
 	return account.Id, nil
 }

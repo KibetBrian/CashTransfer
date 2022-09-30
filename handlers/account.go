@@ -15,9 +15,11 @@ import (
 func CreateAccount(c *gin.Context) {
 	var Account models.Account
 	var user models.User
+
 	c.ShouldBindJSON(&Account)
 	Account.Id = uuid.NewV4()
 	Account.Password, _ = utils.HashPassword(Account.Password)
+
 	db, err := configs.ConnectDb()
 	if err != nil {
 		c.JSON(500, "Error connecting to the database")
@@ -33,6 +35,7 @@ func CreateAccount(c *gin.Context) {
 	db.AutoMigrate(&models.Account{})
 	db.Create(&Account)
 	db.Model(&user).Update("account_id", Account.Id)
+
 	c.JSON(200, gin.H{"Message": "Account Created", "Account": Account})
 }
 
@@ -47,6 +50,7 @@ func GetAccount(c *gin.Context) {
 		c.JSON(404, gin.H{"Message: ": "Seems we don't have an account with such id", "AccountId: ": AccountReq.AccountId})
 		return
 	}
+
 	c.JSON(200, gin.H{"Account": account})
 }
 
@@ -54,11 +58,13 @@ func GetAccount(c *gin.Context) {
 func CheckBalance(c *gin.Context) {
 	var CheckBalanceReq models.CheckBalanceReq
 	var user models.User
+
 	db, err := configs.ConnectDb()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, "Database connection error")
 		return
 	}
+
 	if err := c.ShouldBindJSON(&CheckBalanceReq); err != nil {
 		c.JSON(http.StatusBadRequest, "Check your credentials and try again")
 		return
@@ -86,6 +92,7 @@ func CheckBalance(c *gin.Context) {
 	if !ok {
 		c.JSON(http.StatusBadRequest, "Error occured, try again")
 	}
+	
 	c.JSON(http.StatusAccepted, account.Balance)
 }
 

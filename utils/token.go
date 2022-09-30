@@ -11,13 +11,16 @@ func GetPayload (token string) (*auth.Payload, error){
 	if err != nil{
 		return nil, fmt.Errorf("env value retrieval failed. err: %v",err)
 	}
+
 	maker, err := auth.NewMaker(secretKey)
 	if err != nil{
 		return nil, fmt.Errorf("new make creation failed. err: %v",err)
 	}
+
 	payload, err := maker.VerifyToken(token)
 	if err!= nil{
 		return nil, err
 	}
+	
 	return payload, nil
 }
