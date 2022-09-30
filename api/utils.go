@@ -2,15 +2,15 @@ package api
 
 import (
 	"log"
+	"os"
 
 	"github.com/KibetBrian/fisa/auth"
-	"github.com/KibetBrian/fisa/utils"
 )
 
 func NewMaker() (auth.Maker) {
-	secretKey, err := utils.GetEnvVal("JWT_SECRET_KEY")
-	if err != nil {
-		log.Fatal("Error occurred while retrieving env val. Err: ", err)
+	secretKey, isFound:= os.LookupEnv("JWT_SECRET_KEY")
+	if !isFound  {
+		log.Fatal("Error occurred while retrieving env val. Key: ", "JWT_SECRET_KEY")
 		return nil
 	}
 
