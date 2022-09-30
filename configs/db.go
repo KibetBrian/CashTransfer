@@ -3,21 +3,21 @@ package configs
 import (
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 
 	"github.com/KibetBrian/fisa/models"
-	"github.com/KibetBrian/fisa/utils"
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var (
-	host, _     = utils.GetEnvVal("DB_HOST")
-	port, _     = utils.GetEnvVal("DB_PORT")
-	user, _     = utils.GetEnvVal("DB_USER")
-	password, _ = utils.GetEnvVal("DB_PASSWORD")
-	database, _ = utils.GetEnvVal("DB_DATABASE")
+	host = os.Getenv("DB_HOST")
+	port=os.Getenv("DB_PORT")
+	user=os.Getenv("DB_USER")
+	password=os.Getenv("DB_PASSWORD")
+	database=os.Getenv("DB_DATABASE")
 	Db          *gorm.DB
 )
 
