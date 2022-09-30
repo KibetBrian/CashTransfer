@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"fmt"
+	"log"
 	"math/rand"
 	"net/mail"
 	"os"
@@ -14,6 +16,42 @@ import (
 
 func init(){
 	rand.Seed(time.Now().UnixNano())
+	
+	err := SetUpEnvironmentVariable(".env.example")
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+//Environment variable loader
+func SetUpEnvironmentVariable(path string) error {
+	file, err := os.ReadFile(path)
+	if err != nil {
+		return fmt.Errorf("Could not read environment variable: %v", err)
+	}
+
+	res := []string{}
+	for _, v := range file{
+		res = append(res, string(v))
+	}
+	
+	resString := ""
+	for _, v := range res{
+		resString+=v
+	}
+	
+	vals := strings.Split(resString, "\n")
+	for _, v := range vals{
+		v := strings.Split(v, "=")
+
+		err := os.Setenv(v[0],v[1])
+		if err!= nil {
+			return fmt.Errorf("Could not set environment variable: %v", err)
+		}
+
+	}
+	
+	return nil
 }
 
 //Takes email address as an input and checks if it is valid
