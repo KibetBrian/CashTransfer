@@ -2,14 +2,15 @@ package utils
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/KibetBrian/fisa/auth"
 )
 
 func GetPayload (token string) (*auth.Payload, error){
-	secretKey, err := GetEnvVal("JWT_SECRET_KEY")
-	if err != nil{
-		return nil, fmt.Errorf("env value retrieval failed. err: %v",err)
+	secretKey, isFound:= os.LookupEnv("JWT_SECRET_KEY")
+	if !isFound{
+		return nil, fmt.Errorf("Envirironment value not found. Key: JWT_SECRET_KEY")
 	}
 
 	maker, err := auth.NewMaker(secretKey)
