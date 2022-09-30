@@ -1,5 +1,5 @@
 ## Basic peer to peer cash transfer application
-I built this application to understand the ACID properties of a database transaction. It can perfom operations such as account creation, transfering amount to different email addresses and return histrory of trasactions via a RESTful API.
+I built this application to understand the ACID properties of a database transaction. It can perfom operations such as account creation, transfering amount to different email addresses and returning history of trasactions via a RESTful API.
 
 ## Local Setup
 
