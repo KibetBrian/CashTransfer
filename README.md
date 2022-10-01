@@ -5,7 +5,7 @@ I built this application to understand the ACID properties of a database transac
 
 ### Requirements
 - Go 1.17 or higher
-- Docker
+- Docker and Docker Compose
 
 ## Running the application
 Follow the following steps to run the application
